@@ -4,9 +4,9 @@ import unittest
 
 import torch
 
-from gpytorch import settings
-from gpytorch.lazy import NonLazyTensor
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch import settings
+from Lgpytorch.lazy import NonLazyTensor
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 def _ensure_symmetric_grad(grad):

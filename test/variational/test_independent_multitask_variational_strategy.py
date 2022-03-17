@@ -4,21 +4,21 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.test.variational_test_case import VariationalTestCase
+import Lgpytorch
+from Lgpytorch.test.variational_test_case import VariationalTestCase
 
 
 def multitask_likelihood_cls():
-    return gpytorch.likelihoods.MultitaskGaussianLikelihood(num_tasks=2)
+    return Lgpytorch.likelihoods.MultitaskGaussianLikelihood(num_tasks=2)
 
 
 def singletask_likelihood_cls():
-    return gpytorch.likelihoods.GaussianLikelihood()
+    return Lgpytorch.likelihoods.GaussianLikelihood()
 
 
 def strategy_cls(model, inducing_points, variational_distribution, learn_inducing_locations):
-    return gpytorch.variational.IndependentMultitaskVariationalStrategy(
-        gpytorch.variational.VariationalStrategy(
+    return Lgpytorch.variational.IndependentMultitaskVariationalStrategy(
+        Lgpytorch.variational.VariationalStrategy(
             model, inducing_points, variational_distribution, learn_inducing_locations
         ),
         num_tasks=2,
@@ -36,7 +36,7 @@ class TestMultitaskVariationalGP(VariationalTestCase, unittest.TestCase):
 
     @property
     def distribution_cls(self):
-        return gpytorch.variational.CholeskyVariationalDistribution
+        return Lgpytorch.variational.CholeskyVariationalDistribution
 
     @property
     def likelihood_cls(self):
@@ -44,7 +44,7 @@ class TestMultitaskVariationalGP(VariationalTestCase, unittest.TestCase):
 
     @property
     def mll_cls(self):
-        return gpytorch.mlls.VariationalELBO
+        return Lgpytorch.mlls.VariationalELBO
 
     @property
     def strategy_cls(self):
@@ -64,54 +64,54 @@ class TestMultitaskVariationalGP(VariationalTestCase, unittest.TestCase):
 class TestMultitaskPredictiveGP(TestMultitaskVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.PredictiveLogLikelihood
+        return Lgpytorch.mlls.PredictiveLogLikelihood
 
 
 class TestMultitaskRobustVGP(TestMultitaskVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.GammaRobustVariationalELBO
+        return Lgpytorch.mlls.GammaRobustVariationalELBO
 
 
 class TestMeanFieldMultitaskVariationalGP(TestMultitaskVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldMultitaskPredictiveGP(TestMultitaskPredictiveGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldMultitaskRobustVGP(TestMultitaskRobustVGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestDeltaMultitaskVariationalGP(TestMultitaskVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestDeltaMultitaskPredictiveGP(TestMultitaskPredictiveGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestDeltaMultitaskRobustVGP(TestMultitaskRobustVGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestIndexedMultitaskVariationalGP(TestMultitaskVariationalGP, unittest.TestCase):
     def _training_iter(
-        self, model, likelihood, batch_shape=torch.Size([]), mll_cls=gpytorch.mlls.VariationalELBO, cuda=False
+        self, model, likelihood, batch_shape=torch.Size([]), mll_cls=Lgpytorch.mlls.VariationalELBO, cuda=False
     ):
         batch_shape = list(batch_shape)
         batch_shape[-1] = 1
@@ -174,49 +174,49 @@ class TestIndexedMultitaskVariationalGP(TestMultitaskVariationalGP, unittest.Tes
 class TestIndexedMultitaskPredictiveGP(TestIndexedMultitaskVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.PredictiveLogLikelihood
+        return Lgpytorch.mlls.PredictiveLogLikelihood
 
 
 class TestIndexedMultitaskRobustVGP(TestIndexedMultitaskVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.GammaRobustVariationalELBO
+        return Lgpytorch.mlls.GammaRobustVariationalELBO
 
 
 class TestMeanFieldIndexedMultitaskVariationalGP(TestIndexedMultitaskVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldIndexedMultitaskPredictiveGP(TestIndexedMultitaskPredictiveGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldIndexedMultitaskRobustVGP(TestIndexedMultitaskRobustVGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestDeltaIndexedMultitaskVariationalGP(TestIndexedMultitaskVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestDeltaIndexedMultitaskPredictiveGP(TestIndexedMultitaskPredictiveGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestDeltaIndexedMultitaskRobustVGP(TestIndexedMultitaskRobustVGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 if __name__ == "__main__":

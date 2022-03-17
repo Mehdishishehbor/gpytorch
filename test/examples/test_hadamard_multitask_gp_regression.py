@@ -5,13 +5,13 @@ import random
 import unittest
 from math import exp, pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.kernels import IndexKernel, RBFKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import LKJCovariancePrior, SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import IndexKernel, RBFKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import LKJCovariancePrior, SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
 from torch import optim
 
 # Simple training data: let's try to learn a sine function
@@ -28,7 +28,7 @@ test_y1 = torch.sin(test_x * (2 * pi))
 test_y2 = torch.cos(test_x * (2 * pi))
 
 
-class HadamardMultitaskGPModel(gpytorch.models.ExactGP):
+class HadamardMultitaskGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(HadamardMultitaskGPModel, self).__init__(train_x, train_y, likelihood)
         # Default bounds on mean are (-1e10, 1e10)
@@ -70,7 +70,7 @@ class TestHadamardMultitaskGPRegression(unittest.TestCase):
         gp_model = HadamardMultitaskGPModel(
             (torch.cat([train_x, train_x]), torch.cat([y1_inds, y2_inds])), torch.cat([train_y1, train_y2]), likelihood
         )
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Optimize the model
         gp_model.train()

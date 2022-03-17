@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.module import Module
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.module import Module
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 class TestModule(BaseTestCase, unittest.TestCase):

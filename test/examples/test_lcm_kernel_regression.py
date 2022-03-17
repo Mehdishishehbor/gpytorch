@@ -4,14 +4,14 @@ import math
 import torch
 import unittest
 
-import gpytorch
-from gpytorch.kernels import RBFKernel, MultitaskKernel, LCMKernel
-from gpytorch.means import ConstantMean, MultitaskMean
-from gpytorch.likelihoods import MultitaskGaussianLikelihood
-from gpytorch.distributions import MultitaskMultivariateNormal
+import Lgpytorch
+from Lgpytorch.kernels import RBFKernel, MultitaskKernel, LCMKernel
+from Lgpytorch.means import ConstantMean, MultitaskMean
+from Lgpytorch.likelihoods import MultitaskGaussianLikelihood
+from Lgpytorch.distributions import MultitaskMultivariateNormal
 
 
-class MultitaskGPModel(gpytorch.models.ExactGP):
+class MultitaskGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(MultitaskGPModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = MultitaskMean(ConstantMean(), num_tasks=2)
@@ -24,7 +24,7 @@ class MultitaskGPModel(gpytorch.models.ExactGP):
         return MultitaskMultivariateNormal(mean_x, covar_x)
 
 
-class MultitaskGPModel_ICM(gpytorch.models.ExactGP):
+class MultitaskGPModel_ICM(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(MultitaskGPModel_ICM, self).__init__(train_x, train_y, likelihood)
         self.mean_module = MultitaskMean(ConstantMean(), num_tasks=2)
@@ -55,7 +55,7 @@ class TestLCMKernelRegression(unittest.TestCase):
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)  # Includes GaussianL^ikelihood parameters
         model.train()
         likelihood.train()
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
         n_iter = 50
         for _ in range(n_iter):
             optimizer.zero_grad()
@@ -76,7 +76,7 @@ class TestLCMKernelRegression(unittest.TestCase):
         likelihood = MultitaskGaussianLikelihood(num_tasks=2)
         model_icm.train()
         likelihood.train()
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model_icm)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model_icm)
         optimizer = torch.optim.Adam(model_icm.parameters(), lr=0.1)  # Includes GaussianLikelihood parameters
         for _ in range(n_iter):
             optimizer.zero_grad()

@@ -5,8 +5,8 @@ import unittest
 import torch
 from torch.distributions import Gamma
 
-from gpytorch.priors import GammaPrior
-from gpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.priors import GammaPrior
+from Lgpytorch.test.utils import least_used_cuda_device
 
 
 class TestGammaPrior(unittest.TestCase):

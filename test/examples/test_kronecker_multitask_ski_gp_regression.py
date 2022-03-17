@@ -5,16 +5,16 @@ import random
 import unittest
 from math import pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.distributions import MultitaskMultivariateNormal
-from gpytorch.kernels import GridInterpolationKernel, MultitaskKernel, RBFKernel
-from gpytorch.likelihoods import MultitaskGaussianLikelihood
-from gpytorch.means import ConstantMean, MultitaskMean
-from gpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.distributions import MultitaskMultivariateNormal
+from Lgpytorch.kernels import GridInterpolationKernel, MultitaskKernel, RBFKernel
+from Lgpytorch.likelihoods import MultitaskGaussianLikelihood
+from Lgpytorch.means import ConstantMean, MultitaskMean
+from Lgpytorch.test.utils import least_used_cuda_device
 
 
-class MultitaskGPModel(gpytorch.models.ExactGP):
+class MultitaskGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(MultitaskGPModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = MultitaskMean(ConstantMean(), num_tasks=2)
@@ -67,7 +67,7 @@ class TestKroneckerMultiTaskKISSGPRegression(unittest.TestCase):
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)  # Includes GaussianLikelihood parameters
 
         # "Loss" for GPs - the marginal log likelihood
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
 
         n_iter = 50
         for _ in range(n_iter):

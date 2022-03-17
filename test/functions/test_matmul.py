@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import NonLazyTensor
-from gpytorch.test.utils import approx_equal
+from Lgpytorch.lazy import NonLazyTensor
+from Lgpytorch.test.utils import approx_equal
 
 
 class TestMatmulNonBatch(unittest.TestCase):

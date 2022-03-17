@@ -7,12 +7,12 @@ import random
 import torch
 import unittest
 
-import gpytorch
-from gpytorch.kernels import RBFKernel, GridInterpolationKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
+import Lgpytorch
+from Lgpytorch.kernels import RBFKernel, GridInterpolationKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
 from torch import optim
 
 # Simple training data: let's try to learn a sine function,
@@ -39,7 +39,7 @@ test_y = test_y + torch.randn_like(test_y).mul_(0.01)
 
 
 # All tests that pass with the exact kernel should pass with the interpolated kernel.
-class GPRegressionModel(gpytorch.models.ExactGP):
+class GPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1, 1))
@@ -68,13 +68,13 @@ class TestKISSGPKroneckerProductRegression(unittest.TestCase):
     def test_kissgp_gp_mean_abs_error(self):
         likelihood = GaussianLikelihood()
         gp_model = GPRegressionModel(train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Optimize the model
         gp_model.train()
         likelihood.train()
 
-        with gpytorch.settings.max_preconditioner_size(5), gpytorch.settings.use_toeplitz(True):
+        with Lgpytorch.settings.max_preconditioner_size(5), Lgpytorch.settings.use_toeplitz(True):
             optimizer = optim.Adam(gp_model.parameters(), lr=0.1)
             optimizer.n_iter = 0
             for _ in range(8):
@@ -91,7 +91,7 @@ class TestKISSGPKroneckerProductRegression(unittest.TestCase):
 
         # Test the model
         # Use the other toeplitz option here for testing
-        with gpytorch.settings.max_preconditioner_size(5), gpytorch.settings.use_toeplitz(True):
+        with Lgpytorch.settings.max_preconditioner_size(5), Lgpytorch.settings.use_toeplitz(True):
             gp_model.eval()
             likelihood.eval()
 

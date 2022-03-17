@@ -5,8 +5,8 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import CosineKernel
-from gpytorch.priors import NormalPrior
+from Lgpytorch.kernels import CosineKernel
+from Lgpytorch.priors import NormalPrior
 
 
 class TestCosineKernel(unittest.TestCase):

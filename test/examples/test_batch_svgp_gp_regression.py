@@ -5,12 +5,12 @@ import random
 import unittest
 from math import pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.models import ApproximateGP
-from gpytorch.test.utils import least_used_cuda_device
-from gpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
 from torch import optim
 
 
@@ -37,15 +37,15 @@ class SVGPRegressionModel(ApproximateGP):
             self, inducing_points, variational_distribution, learn_inducing_locations=True
         )
         super(SVGPRegressionModel, self).__init__(variational_strategy)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(
-            gpytorch.kernels.RBFKernel(lengthscale_prior=gpytorch.priors.SmoothedBoxPrior(0.001, 1.0, sigma=0.1))
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(
+            Lgpytorch.kernels.RBFKernel(lengthscale_prior=Lgpytorch.priors.SmoothedBoxPrior(0.001, 1.0, sigma=0.1))
         )
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
         return latent_pred
 
 
@@ -67,7 +67,7 @@ class TestSVGPRegression(unittest.TestCase):
         likelihood = GaussianLikelihood()
         inducing_points = torch.linspace(0, 1, 25).unsqueeze(-1).repeat(2, 1, 1)
         model = SVGPRegressionModel(inducing_points)
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(-1))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(-1))
 
         # Find optimal model hyperparameters
         model.train()
@@ -102,7 +102,7 @@ class TestSVGPRegression(unittest.TestCase):
         likelihood = GaussianLikelihood()
         inducing_points = torch.linspace(0, 1, 25).unsqueeze(-1)
         model = SVGPRegressionModel(inducing_points)
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(-1))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(-1))
 
         # Find optimal model hyperparameters
         model.train()
@@ -140,7 +140,7 @@ class TestSVGPRegression(unittest.TestCase):
             likelihood = GaussianLikelihood().cuda()
             inducing_points = torch.linspace(0, 1, 25).unsqueeze(-1).repeat(2, 1, 1)
             model = SVGPRegressionModel(inducing_points).cuda()
-            mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(-1))
+            mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(-1))
 
             # Find optimal model hyperparameters
             model.train()

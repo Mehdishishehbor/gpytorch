@@ -7,13 +7,13 @@ import random
 import torch
 import unittest
 
-import gpytorch
+import Lgpytorch
 from torch import optim
-from gpytorch.kernels import RBFKernel, ProductStructureKernel, GridInterpolationKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RBFKernel, ProductStructureKernel, GridInterpolationKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
 
 
 # Simple training data: let's try to learn a sine function,
@@ -38,7 +38,7 @@ test_y = (torch.sin(test_x[:, 0]) + torch.cos(test_x[:, 1])) * (2 * pi)
 
 
 # All tests that pass with the exact kernel should pass with the interpolated kernel.
-class GPRegressionModel(gpytorch.models.ExactGP):
+class GPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1, 1))
@@ -69,7 +69,7 @@ class TestKISSGPMultiplicativeRegression(unittest.TestCase):
     def test_kissgp_gp_mean_abs_error(self):
         likelihood = GaussianLikelihood()
         gp_model = GPRegressionModel(train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Optimize the model
         gp_model.train()
@@ -93,7 +93,7 @@ class TestKISSGPMultiplicativeRegression(unittest.TestCase):
         gp_model.eval()
         likelihood.eval()
 
-        with gpytorch.settings.fast_pred_var():
+        with Lgpytorch.settings.fast_pred_var():
             test_preds = likelihood(gp_model(test_x)).mean
         mean_abs_error = torch.mean(torch.abs(test_y - test_preds))
         self.assertLess(mean_abs_error.squeeze().item(), 0.04)

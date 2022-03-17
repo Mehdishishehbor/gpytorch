@@ -7,18 +7,18 @@ from unittest.mock import MagicMock, patch
 import warnings
 from math import exp, pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import InducingPointKernel, RBFKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.test.utils import least_used_cuda_device
-from gpytorch.utils.warnings import NumericalWarning
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import InducingPointKernel, RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.utils.warnings import NumericalWarning
 from torch import optim
 
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 # Simple training data: let's try to learn a sine function,
@@ -38,7 +38,7 @@ def make_data(cuda=False):
     return train_x, train_y, test_x, test_y
 
 
-class GPRegressionModel(gpytorch.models.ExactGP):
+class GPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1e-5, 1e-5))
@@ -73,7 +73,7 @@ class TestSGPRRegression(unittest.TestCase, BaseTestCase):
         train_x, train_y, test_x, test_y = make_data(cuda=cuda)
         likelihood = GaussianLikelihood()
         gp_model = GPRegressionModel(train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         if cuda:
             gp_model = gp_model.cuda()
@@ -99,7 +99,7 @@ class TestSGPRRegression(unittest.TestCase, BaseTestCase):
 
                 # Check that we have the right LazyTensor type
                 kernel = likelihood(gp_model(train_x)).lazy_covariance_matrix.evaluate_kernel()
-                self.assertIsInstance(kernel, gpytorch.lazy.LowRankRootAddedDiagLazyTensor)
+                self.assertIsInstance(kernel, Lgpytorch.lazy.LowRankRootAddedDiagLazyTensor)
 
             for param in gp_model.parameters():
                 self.assertTrue(param.grad is not None)

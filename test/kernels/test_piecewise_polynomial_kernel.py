@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import PiecewisePolynomialKernel
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import PiecewisePolynomialKernel
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestPiecewisePolynomialKernel(unittest.TestCase, BaseKernelTestCase):

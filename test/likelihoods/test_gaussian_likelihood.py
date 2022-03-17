@@ -5,17 +5,17 @@ import unittest
 
 import torch
 
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.lazy import DiagLazyTensor
-from gpytorch.likelihoods import (
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.lazy import DiagLazyTensor
+from Lgpytorch.likelihoods import (
     DirichletClassificationLikelihood,
     FixedNoiseGaussianLikelihood,
     GaussianLikelihood,
     GaussianLikelihoodWithMissingObs,
 )
-from gpytorch.likelihoods.noise_models import FixedGaussianNoise
-from gpytorch.priors import GammaPrior
-from gpytorch.test.base_likelihood_test_case import BaseLikelihoodTestCase
+from Lgpytorch.likelihoods.noise_models import FixedGaussianNoise
+from Lgpytorch.priors import GammaPrior
+from Lgpytorch.test.base_likelihood_test_case import BaseLikelihoodTestCase
 
 
 class TestGaussianLikelihood(BaseLikelihoodTestCase, unittest.TestCase):

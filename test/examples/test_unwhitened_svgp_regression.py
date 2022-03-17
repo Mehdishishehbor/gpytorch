@@ -3,11 +3,11 @@
 import math
 import unittest
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.models import ApproximateGP
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.test.base_test_case import BaseTestCase
 from torch import optim
 
 
@@ -23,17 +23,17 @@ def train_data(cuda=False):
 class SVGPRegressionModel(ApproximateGP):
     def __init__(self, inducing_points, distribution_cls):
         variational_distribution = distribution_cls(inducing_points.size(-1))
-        variational_strategy = gpytorch.variational.UnwhitenedVariationalStrategy(
+        variational_strategy = Lgpytorch.variational.UnwhitenedVariationalStrategy(
             self, inducing_points, variational_distribution, learn_inducing_locations=True
         )
         super(SVGPRegressionModel, self).__init__(variational_strategy)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
         return latent_pred
 
 
@@ -43,8 +43,8 @@ class TestSVGPRegression(BaseTestCase, unittest.TestCase):
     def test_regression_error(
         self,
         cuda=False,
-        mll_cls=gpytorch.mlls.VariationalELBO,
-        distribution_cls=gpytorch.variational.CholeskyVariationalDistribution,
+        mll_cls=Lgpytorch.mlls.VariationalELBO,
+        distribution_cls=Lgpytorch.variational.CholeskyVariationalDistribution,
     ):
         train_x, train_y = train_data(cuda=cuda)
         likelihood = GaussianLikelihood()

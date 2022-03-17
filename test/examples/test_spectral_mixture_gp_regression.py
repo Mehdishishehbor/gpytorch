@@ -6,14 +6,14 @@ from collections import OrderedDict
 import torch
 import unittest
 
-import gpytorch
+import Lgpytorch
 from torch import optim
-from gpytorch.kernels import SpectralMixtureKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.kernels import SpectralMixtureKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 # Simple training data: let's try to learn a sine function
@@ -42,7 +42,7 @@ good_state_dict = OrderedDict(
 )
 
 
-class SpectralMixtureGPModel(gpytorch.models.ExactGP):
+class SpectralMixtureGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood, empspect=False):
         super(SpectralMixtureGPModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1, 1))
@@ -67,7 +67,7 @@ class TestSpectralMixtureGPRegression(BaseTestCase, unittest.TestCase):
     def test_spectral_mixture_gp_mean_abs_error(self, empspect=False):
         likelihood = GaussianLikelihood(noise_prior=SmoothedBoxPrior(exp(-5), exp(3), sigma=0.1))
         gp_model = SpectralMixtureGPModel(train_x, train_y, likelihood, empspect=empspect)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Optimize the model
         gp_model.train()

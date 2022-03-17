@@ -5,28 +5,28 @@ import unittest
 
 import torch
 
-import gpytorch
+import Lgpytorch
 
 
-class ExactGPModel(gpytorch.models.ExactGP):
+class ExactGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super().__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ConstantMean(batch_shape=train_x.shape[:-2])
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.mean_module = Lgpytorch.means.ConstantMean(batch_shape=train_x.shape[:-2])
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class TestLeaveOneOutPseudoLikelihood(unittest.TestCase):
     def get_data(self, shapes, dtype=None, device=None):
         train_x = torch.rand(*shapes, dtype=dtype, device=device, requires_grad=True)
         train_y = torch.sin(train_x[..., 0]) + torch.cos(train_x[..., 1])
-        likelihood = gpytorch.likelihoods.GaussianLikelihood().to(dtype=dtype, device=device)
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood().to(dtype=dtype, device=device)
         model = ExactGPModel(train_x, train_y, likelihood).to(dtype=dtype, device=device)
-        loocv = gpytorch.mlls.LeaveOneOutPseudoLikelihood(likelihood=likelihood, model=model)
+        loocv = Lgpytorch.mlls.LeaveOneOutPseudoLikelihood(likelihood=likelihood, model=model)
         return train_x, train_y, loocv
 
     def test_smoke(self):
@@ -58,7 +58,7 @@ class TestLeaveOneOutPseudoLikelihood(unittest.TestCase):
         loocv_2 = 0.0
         for i in range(n):
             inds = torch.cat((torch.arange(0, i), torch.arange(i + 1, n)))
-            likelihood = gpytorch.likelihoods.GaussianLikelihood()
+            likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
             model = ExactGPModel(train_x[inds, :], train_y[inds], likelihood)
             model.eval()
             with torch.no_grad():

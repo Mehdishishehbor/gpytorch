@@ -7,11 +7,11 @@ from math import pi
 
 import torch
 
-import gpytorch
-from gpytorch.distributions import MultitaskMultivariateNormal
-from gpytorch.kernels import MultitaskKernel, RBFKernel
-from gpytorch.likelihoods import MultitaskGaussianLikelihood
-from gpytorch.means import ConstantMean, MultitaskMean
+import Lgpytorch
+from Lgpytorch.distributions import MultitaskMultivariateNormal
+from Lgpytorch.kernels import MultitaskKernel, RBFKernel
+from Lgpytorch.likelihoods import MultitaskGaussianLikelihood
+from Lgpytorch.means import ConstantMean, MultitaskMean
 
 # Simple training data: let's try to learn a sine function
 train_x = torch.linspace(0, 1, 100)
@@ -26,7 +26,7 @@ train_y2 = torch.cos(train_x * (2 * pi)) + latent_error + torch.randn(train_x.si
 train_y = torch.stack([train_y1, train_y2], -1)
 
 
-class MultitaskGPModel(gpytorch.models.ExactGP):
+class MultitaskGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(MultitaskGPModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = MultitaskMean(ConstantMean(), num_tasks=2)
@@ -63,7 +63,7 @@ class TestMultiTaskGPRegression(unittest.TestCase):
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)  # Includes GaussianLikelihood parameters
 
         # "Loss" for GPs - the marginal log likelihood
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
 
         n_iter = 50
         for _ in range(n_iter):

@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import ToeplitzLazyTensor, lazify
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
+from Lgpytorch.lazy import ToeplitzLazyTensor, lazify
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
 
 
 class TestSumLazyTensor(LazyTensorTestCase, unittest.TestCase):

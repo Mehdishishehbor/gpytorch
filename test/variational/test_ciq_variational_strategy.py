@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.test.variational_test_case import VariationalTestCase
+import Lgpytorch
+from Lgpytorch.test.variational_test_case import VariationalTestCase
 
 
 class TestCiqVariationalGP(VariationalTestCase, unittest.TestCase):
@@ -15,15 +15,15 @@ class TestCiqVariationalGP(VariationalTestCase, unittest.TestCase):
 
     @property
     def distribution_cls(self):
-        return gpytorch.variational.CholeskyVariationalDistribution
+        return Lgpytorch.variational.CholeskyVariationalDistribution
 
     @property
     def mll_cls(self):
-        return gpytorch.mlls.VariationalELBO
+        return Lgpytorch.mlls.VariationalELBO
 
     @property
     def strategy_cls(self):
-        return gpytorch.variational.CiqVariationalStrategy
+        return Lgpytorch.variational.CiqVariationalStrategy
 
     def test_training_iteration(self, *args, **kwargs):
         cg_mock, cholesky_mock, ciq_mock = super().test_training_iteration(*args, **kwargs)
@@ -41,19 +41,19 @@ class TestCiqVariationalGP(VariationalTestCase, unittest.TestCase):
 class TestMeanFieldCiqVariationalGP(TestCiqVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestDeltaCiqVariationalGP(TestCiqVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestNgdCiqVariationalGP(TestCiqVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.NaturalVariationalDistribution
+        return Lgpytorch.variational.NaturalVariationalDistribution
 
 
 if __name__ == "__main__":

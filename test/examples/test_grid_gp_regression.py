@@ -7,15 +7,15 @@ import os
 import random
 import unittest
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.test.utils import least_used_cuda_device
-from gpytorch.utils.warnings import GPInputWarning
+from Lgpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.utils.warnings import GPInputWarning
 from torch import optim
 
 
 def make_data(grid, cuda=False):
-    train_x = gpytorch.utils.grid.create_data_from_grid(grid)
+    train_x = Lgpytorch.utils.grid.create_data_from_grid(grid)
     train_y = torch.sin((train_x.sum(-1)) * (2 * math.pi)) + torch.randn_like(train_x[:, 0]).mul(0.01)
     n = 20
     test_x = torch.zeros(int(pow(n, 2)), 2)
@@ -32,16 +32,16 @@ def make_data(grid, cuda=False):
     return train_x, train_y, test_x, test_y
 
 
-class GridGPRegressionModel(gpytorch.models.ExactGP):
+class GridGPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, grid, train_x, train_y, likelihood):
         super(GridGPRegressionModel, self).__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.GridKernel(gpytorch.kernels.RBFKernel(), grid=grid)
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.GridKernel(Lgpytorch.kernels.RBFKernel(), grid=grid)
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class TestGridGPRegression(unittest.TestCase):
@@ -69,9 +69,9 @@ class TestGridGPRegression(unittest.TestCase):
             )
 
         train_x, train_y, test_x, test_y = make_data(grid, cuda=cuda)
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
         gp_model = GridGPRegressionModel(grid, train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         if cuda:
             gp_model.cuda()
@@ -83,7 +83,7 @@ class TestGridGPRegression(unittest.TestCase):
 
         optimizer = optim.Adam(gp_model.parameters(), lr=0.1)
         optimizer.n_iter = 0
-        with gpytorch.settings.debug(True):
+        with Lgpytorch.settings.debug(True):
             for _ in range(20):
                 optimizer.zero_grad()
                 output = gp_model(train_x)

@@ -5,8 +5,8 @@ from unittest import mock
 
 import torch
 
-from gpytorch import settings
-from gpytorch.lazy import (
+from Lgpytorch import settings
+from Lgpytorch.lazy import (
     ConstantDiagLazyTensor,
     DiagLazyTensor,
     KroneckerProductAddedDiagLazyTensor,
@@ -14,7 +14,7 @@ from gpytorch.lazy import (
     KroneckerProductLazyTensor,
     NonLazyTensor,
 )
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
 
 
 class TestKroneckerProductAddedDiagLazyTensor(unittest.TestCase, LazyTensorTestCase):

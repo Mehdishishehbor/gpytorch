@@ -6,9 +6,9 @@ from math import exp
 import torch
 from torch.distributions import LKJCholesky
 
-from gpytorch.priors import LKJCholeskyFactorPrior, LKJCovariancePrior, LKJPrior, SmoothedBoxPrior
-from gpytorch.priors.lkj_prior import _is_valid_correlation_matrix, _is_valid_correlation_matrix_cholesky_factor
-from gpytorch.test.utils import approx_equal, least_used_cuda_device
+from Lgpytorch.priors import LKJCholeskyFactorPrior, LKJCovariancePrior, LKJPrior, SmoothedBoxPrior
+from Lgpytorch.priors.lkj_prior import _is_valid_correlation_matrix, _is_valid_correlation_matrix_cholesky_factor
+from Lgpytorch.test.utils import approx_equal, least_used_cuda_device
 
 
 class TestLKJPrior(unittest.TestCase):

@@ -5,12 +5,12 @@ import os
 import random
 import unittest
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.distributions import MultivariateNormal, MultitaskMultivariateNormal
-from gpytorch.kernels import RBFKernel, ScaleKernel
-from gpytorch.likelihoods import MultitaskGaussianLikelihood
-from gpytorch.means import ConstantMean
+from Lgpytorch.distributions import MultivariateNormal, MultitaskMultivariateNormal
+from Lgpytorch.kernels import RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import MultitaskGaussianLikelihood
+from Lgpytorch.means import ConstantMean
 from torch import optim
 
 
@@ -30,7 +30,7 @@ train_y12 = torch.stack((train_y1, train_y2), dim=-1).contiguous()
 test_y12 = torch.stack((test_y1, test_y2), dim=-1).contiguous()
 
 
-class ExactGPModel(gpytorch.models.ExactGP):
+class ExactGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_inputs, train_targets, likelihood, batch_shape=torch.Size([2])):
         super(ExactGPModel, self).__init__(train_inputs, train_targets, likelihood)
         self.mean_module = ConstantMean(batch_shape=batch_shape)
@@ -59,7 +59,7 @@ class TestIndependentMultitaskGPRegression(unittest.TestCase):
         # We're manually going to set the hyperparameters to something they shouldn't be
         likelihood = MultitaskGaussianLikelihood(num_tasks=2)
         gp_model = ExactGPModel(train_x, train_y12, likelihood)
-        mll = gpytorch.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Find optimal model hyperparameters
         gp_model.train()
@@ -82,7 +82,7 @@ class TestIndependentMultitaskGPRegression(unittest.TestCase):
         likelihood.eval()
 
         # Make predictions for both sets of test points, and check MAEs.
-        with torch.no_grad(), gpytorch.settings.max_eager_kernel_size(1):
+        with torch.no_grad(), Lgpytorch.settings.max_eager_kernel_size(1):
             batch_predictions = likelihood(gp_model(test_x))
             preds1 = batch_predictions.mean[:, 0]
             preds2 = batch_predictions.mean[:, 1]

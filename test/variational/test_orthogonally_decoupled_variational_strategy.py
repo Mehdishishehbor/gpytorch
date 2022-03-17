@@ -4,19 +4,19 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.test.variational_test_case import VariationalTestCase
+import Lgpytorch
+from Lgpytorch.test.variational_test_case import VariationalTestCase
 
 
 def likelihood_cls():
-    return gpytorch.likelihoods.GaussianLikelihood()
+    return Lgpytorch.likelihoods.GaussianLikelihood()
 
 
 def strategy_cls(model, inducing_points, variational_distribution, learn_inducing_locations):
     base_inducing_points = torch.randn(8, inducing_points.size(-1), device=inducing_points.device)
-    base_variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(8)
-    return gpytorch.variational.OrthogonallyDecoupledVariationalStrategy(
-        gpytorch.variational.VariationalStrategy(
+    base_variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(8)
+    return Lgpytorch.variational.OrthogonallyDecoupledVariationalStrategy(
+        Lgpytorch.variational.VariationalStrategy(
             model, base_inducing_points, base_variational_distribution, learn_inducing_locations
         ),
         inducing_points,
@@ -31,7 +31,7 @@ class TestOrthogonallyDecoupledVariationalGP(VariationalTestCase, unittest.TestC
 
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
     @property
     def likelihood_cls(self):
@@ -39,7 +39,7 @@ class TestOrthogonallyDecoupledVariationalGP(VariationalTestCase, unittest.TestC
 
     @property
     def mll_cls(self):
-        return gpytorch.mlls.VariationalELBO
+        return Lgpytorch.mlls.VariationalELBO
 
     @property
     def strategy_cls(self):
@@ -61,13 +61,13 @@ class TestOrthogonallyDecoupledVariationalGP(VariationalTestCase, unittest.TestC
 class TestOrthogonallyDecoupledPredictiveGP(TestOrthogonallyDecoupledVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.PredictiveLogLikelihood
+        return Lgpytorch.mlls.PredictiveLogLikelihood
 
 
 class TestOrthogonallyDecoupledRobustVGP(TestOrthogonallyDecoupledVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.GammaRobustVariationalELBO
+        return Lgpytorch.mlls.GammaRobustVariationalELBO
 
 
 if __name__ == "__main__":

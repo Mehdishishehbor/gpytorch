@@ -4,7 +4,7 @@ import unittest
 
 import torch
 
-from gpytorch.priors import HorseshoePrior
+from Lgpytorch.priors import HorseshoePrior
 
 
 class TestHorseshoePrior(unittest.TestCase):

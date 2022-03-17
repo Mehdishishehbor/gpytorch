@@ -2,8 +2,8 @@
 
 import unittest
 
-from gpytorch import settings
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch import settings
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 class TestSettings(BaseTestCase, unittest.TestCase):

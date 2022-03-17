@@ -5,8 +5,8 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import RQKernel
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import RQKernel
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestRQKernel(unittest.TestCase, BaseKernelTestCase):

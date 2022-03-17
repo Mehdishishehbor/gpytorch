@@ -4,12 +4,12 @@ import math
 import unittest
 from unittest.mock import MagicMock, patch
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.likelihoods import BernoulliLikelihood
-from gpytorch.models import ApproximateGP
-from gpytorch.test.base_test_case import BaseTestCase
-from gpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
+from Lgpytorch.likelihoods import BernoulliLikelihood
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
 from torch import optim
 
 
@@ -29,22 +29,22 @@ class SVGPClassificationModel(ApproximateGP):
             self, inducing_points, variational_distribution, learn_inducing_locations=True
         )
         super(SVGPClassificationModel, self).__init__(variational_strategy)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(
-            gpytorch.kernels.RBFKernel(lengthscale_prior=gpytorch.priors.SmoothedBoxPrior(0.001, 1.0, sigma=0.1))
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(
+            Lgpytorch.kernels.RBFKernel(lengthscale_prior=Lgpytorch.priors.SmoothedBoxPrior(0.001, 1.0, sigma=0.1))
         )
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
         return latent_pred
 
 
 class TestSVGPClassification(BaseTestCase, unittest.TestCase):
     seed = 1
 
-    def test_classification_error(self, cuda=False, mll_cls=gpytorch.mlls.VariationalELBO):
+    def test_classification_error(self, cuda=False, mll_cls=Lgpytorch.mlls.VariationalELBO):
         train_x, train_y = train_data(cuda=cuda)
         likelihood = BernoulliLikelihood()
         model = SVGPClassificationModel(torch.linspace(0, 1, 25))
@@ -59,7 +59,7 @@ class TestSVGPClassification(BaseTestCase, unittest.TestCase):
         likelihood.train()
         optimizer = optim.Adam([{"params": model.parameters()}, {"params": likelihood.parameters()}], lr=0.1)
 
-        _wrapped_cg = MagicMock(wraps=gpytorch.utils.linear_cg)
+        _wrapped_cg = MagicMock(wraps=Lgpytorch.utils.linear_cg)
         _cg_mock = patch("gpytorch.utils.linear_cg", new=_wrapped_cg)
         with _cg_mock as cg_mock:
             for _ in range(400):
@@ -86,7 +86,7 @@ class TestSVGPClassification(BaseTestCase, unittest.TestCase):
             self.assertFalse(cg_mock.called)
 
     def test_predictive_ll_classification_error(self):
-        return self.test_classification_error(mll_cls=gpytorch.mlls.PredictiveLogLikelihood)
+        return self.test_classification_error(mll_cls=Lgpytorch.mlls.PredictiveLogLikelihood)
 
 
 if __name__ == "__main__":

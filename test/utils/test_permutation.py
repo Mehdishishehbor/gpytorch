@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.test.base_test_case import BaseTestCase
-from gpytorch.utils.permutation import apply_permutation, inverse_permutation
+from Lgpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.utils.permutation import apply_permutation, inverse_permutation
 
 
 class TestPermutationHelpers(BaseTestCase, unittest.TestCase):

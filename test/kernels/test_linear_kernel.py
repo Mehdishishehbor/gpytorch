@@ -4,9 +4,9 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import LinearKernel
-from gpytorch.priors import NormalPrior
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import LinearKernel
+from Lgpytorch.priors import NormalPrior
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestLinearKernel(unittest.TestCase, BaseKernelTestCase):

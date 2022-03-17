@@ -5,8 +5,8 @@ import unittest
 import torch
 from torch.distributions import Normal
 
-from gpytorch.priors import NormalPrior
-from gpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.priors import NormalPrior
+from Lgpytorch.test.utils import least_used_cuda_device
 
 
 class TestNormalPrior(unittest.TestCase):

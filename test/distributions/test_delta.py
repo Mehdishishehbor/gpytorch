@@ -6,8 +6,8 @@ import unittest
 import numpy as np
 import torch
 
-import gpytorch.distributions as dist
-from gpytorch.test.base_test_case import BaseTestCase
+import Lgpytorch.distributions as dist
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 class TestDelta(BaseTestCase, unittest.TestCase):

@@ -4,14 +4,14 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch import settings
-from gpytorch.kernels import GridInterpolationKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.mlls import ExactMarginalLogLikelihood
-from gpytorch.models import ExactGP
-from gpytorch.models.exact_prediction_strategies import InterpolatedPredictionStrategy
-from gpytorch.test.model_test_case import BaseModelTestCase
+import Lgpytorch
+from Lgpytorch import settings
+from Lgpytorch.kernels import GridInterpolationKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.mlls import ExactMarginalLogLikelihood
+from Lgpytorch.models import ExactGP
+from Lgpytorch.models.exact_prediction_strategies import InterpolatedPredictionStrategy
+from Lgpytorch.test.model_test_case import BaseModelTestCase
 
 N_PTS = 50
 
@@ -28,21 +28,21 @@ class GridInterpolationKernelMock(GridInterpolationKernel):
 class ExactGPModel(ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super().__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class InterpolatedExactGPModel(ExactGP):
     def __init__(self, train_x, train_y, likelihood, should_use_wiski=False):
         super().__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ConstantMean()
+        self.mean_module = Lgpytorch.means.ConstantMean()
         self.covar_module = GridInterpolationKernelMock(
-            base_kernel=gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel()),
+            base_kernel=Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel()),
             grid_size=128,
             num_dims=1,
             should_use_wiski=should_use_wiski,
@@ -51,22 +51,22 @@ class InterpolatedExactGPModel(ExactGP):
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class SumExactGPModel(ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super().__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ConstantMean()
-        covar_a = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
-        covar_b = gpytorch.kernels.ScaleKernel(gpytorch.kernels.MaternKernel(nu=0.5))
-        covar_c = gpytorch.kernels.LinearKernel()  # this one is important because its covariance matrix can be lazy
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        covar_a = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
+        covar_b = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.MaternKernel(nu=0.5))
+        covar_c = Lgpytorch.kernels.LinearKernel()  # this one is important because its covariance matrix can be lazy
         self.covar_module = covar_a + covar_b + covar_c
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class TestExactGP(BaseModelTestCase, unittest.TestCase):
@@ -78,7 +78,7 @@ class TestExactGP(BaseModelTestCase, unittest.TestCase):
         return torch.randn(N_PTS, 1)
 
     def create_likelihood_and_labels(self):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
         labels = torch.randn(N_PTS) + 2
         return likelihood, labels
 
@@ -86,20 +86,20 @@ class TestExactGP(BaseModelTestCase, unittest.TestCase):
         return torch.randn(*batch_shape, N_PTS, 1)
 
     def create_batch_likelihood_and_labels(self, batch_shape=torch.Size([3])):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood(batch_shape=batch_shape)
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood(batch_shape=batch_shape)
         labels = torch.randn(*batch_shape, N_PTS) + 2
         return likelihood, labels
 
     def test_forward_eval_fast(self):
-        with gpytorch.settings.max_eager_kernel_size(1), gpytorch.settings.fast_pred_var(True):
+        with Lgpytorch.settings.max_eager_kernel_size(1), Lgpytorch.settings.fast_pred_var(True):
             self.test_forward_eval()
 
     def test_batch_forward_eval_fast(self):
-        with gpytorch.settings.max_eager_kernel_size(1), gpytorch.settings.fast_pred_var(True):
+        with Lgpytorch.settings.max_eager_kernel_size(1), Lgpytorch.settings.fast_pred_var(True):
             self.test_batch_forward_eval()
 
     def test_multi_batch_forward_eval_fast(self):
-        with gpytorch.settings.max_eager_kernel_size(1), gpytorch.settings.fast_pred_var(True):
+        with Lgpytorch.settings.max_eager_kernel_size(1), Lgpytorch.settings.fast_pred_var(True):
             self.test_multi_batch_forward_eval()
 
     def test_batch_forward_then_nonbatch_forward_eval(self):
@@ -170,7 +170,7 @@ class TestExactGP(BaseModelTestCase, unittest.TestCase):
 
         test_data = self.create_test_data()
         prior_out = prior_model(test_data)
-        with gpytorch.settings.prior_mode(True):
+        with Lgpytorch.settings.prior_mode(True):
             prior_out_cm = model(test_data)
         self.assertTrue(torch.allclose(prior_out.mean, prior_out_cm.mean))
         self.assertTrue(torch.allclose(prior_out.covariance_matrix, prior_out_cm.covariance_matrix))

@@ -4,11 +4,11 @@ import math
 import unittest
 from unittest.mock import MagicMock, patch
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.models import ApproximateGP
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.test.base_test_case import BaseTestCase
 from torch import optim
 
 
@@ -20,12 +20,12 @@ def train_data():
 
 class SVGPRegressionModel(ApproximateGP):
     def __init__(self, inducing_points, base_inducing_points):
-        base_variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
+        base_variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(
             base_inducing_points.size(-1)
         )
-        variational_distribution = gpytorch.variational.DeltaVariationalDistribution(inducing_points.size(-1))
-        variational_strategy = gpytorch.variational.OrthogonallyDecoupledVariationalStrategy(
-            gpytorch.variational.VariationalStrategy(
+        variational_distribution = Lgpytorch.variational.DeltaVariationalDistribution(inducing_points.size(-1))
+        variational_strategy = Lgpytorch.variational.OrthogonallyDecoupledVariationalStrategy(
+            Lgpytorch.variational.VariationalStrategy(
                 self,
                 base_inducing_points,
                 base_variational_distribution,
@@ -35,13 +35,13 @@ class SVGPRegressionModel(ApproximateGP):
             variational_distribution,
         )
         super(SVGPRegressionModel, self).__init__(variational_strategy)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
         return latent_pred
 
 
@@ -50,8 +50,8 @@ class TestSVGPRegression(BaseTestCase, unittest.TestCase):
 
     def test_regression_error(
         self,
-        mll_cls=gpytorch.mlls.VariationalELBO,
-        distribution_cls=gpytorch.variational.CholeskyVariationalDistribution,
+        mll_cls=Lgpytorch.mlls.VariationalELBO,
+        distribution_cls=Lgpytorch.variational.CholeskyVariationalDistribution,
     ):
         train_x, train_y = train_data()
         likelihood = GaussianLikelihood()
@@ -63,7 +63,7 @@ class TestSVGPRegression(BaseTestCase, unittest.TestCase):
         likelihood.train()
         optimizer = optim.Adam([{"params": model.parameters()}, {"params": likelihood.parameters()}], lr=0.01)
 
-        _wrapped_cg = MagicMock(wraps=gpytorch.utils.linear_cg)
+        _wrapped_cg = MagicMock(wraps=Lgpytorch.utils.linear_cg)
         _cg_mock = patch("gpytorch.utils.linear_cg", new=_wrapped_cg)
         with _cg_mock as cg_mock:
             for _ in range(75):
@@ -91,8 +91,8 @@ class TestSVGPRegression(BaseTestCase, unittest.TestCase):
 
     def test_predictive_ll_regression_error(self):
         return self.test_regression_error(
-            mll_cls=gpytorch.mlls.PredictiveLogLikelihood,
-            distribution_cls=gpytorch.variational.MeanFieldVariationalDistribution,
+            mll_cls=Lgpytorch.mlls.PredictiveLogLikelihood,
+            distribution_cls=Lgpytorch.variational.MeanFieldVariationalDistribution,
         )
 
 

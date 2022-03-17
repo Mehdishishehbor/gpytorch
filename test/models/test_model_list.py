@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.likelihoods import FixedNoiseGaussianLikelihood
-from gpytorch.models import IndependentModelList
+from Lgpytorch.likelihoods import FixedNoiseGaussianLikelihood
+from Lgpytorch.models import IndependentModelList
 
 from .test_exact_gp import TestExactGP
 

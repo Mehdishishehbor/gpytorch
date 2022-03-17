@@ -5,14 +5,14 @@ import random
 import unittest
 from math import exp, pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import GridInterpolationKernel, RBFKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import GridInterpolationKernel, RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.test.utils import least_used_cuda_device
 from torch import optim
 
 
@@ -31,7 +31,7 @@ def make_data(cuda=False):
     return train_x, train_y, test_x, test_y
 
 
-class GPRegressionModel(gpytorch.models.ExactGP):
+class GPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1e-5, 1e-5))
@@ -61,7 +61,7 @@ class TestKISSGPRegression(unittest.TestCase):
         train_x, train_y, test_x, test_y = make_data()
         likelihood = GaussianLikelihood()
         gp_model = GPRegressionModel(train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Optimize the model
         gp_model.train()
@@ -69,7 +69,7 @@ class TestKISSGPRegression(unittest.TestCase):
 
         optimizer = optim.Adam(gp_model.parameters(), lr=0.1)
         optimizer.n_iter = 0
-        with gpytorch.settings.debug(False):
+        with Lgpytorch.settings.debug(False):
             for _ in range(25):
                 optimizer.zero_grad()
                 output = gp_model(train_x)
@@ -92,11 +92,11 @@ class TestKISSGPRegression(unittest.TestCase):
         self.assertLess(mean_abs_error.squeeze().item(), 0.05)
 
     def test_kissgp_gp_fast_pred_var(self):
-        with gpytorch.settings.fast_pred_var(), gpytorch.settings.debug(False):
+        with Lgpytorch.settings.fast_pred_var(), Lgpytorch.settings.debug(False):
             train_x, train_y, test_x, test_y = make_data()
             likelihood = GaussianLikelihood()
             gp_model = GPRegressionModel(train_x, train_y, likelihood)
-            mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+            mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
             # Optimize the model
             gp_model.train()
@@ -138,7 +138,7 @@ class TestKISSGPRegression(unittest.TestCase):
             train_x, train_y, test_x, test_y = make_data(cuda=True)
             likelihood = GaussianLikelihood().cuda()
             gp_model = GPRegressionModel(train_x, train_y, likelihood).cuda()
-            mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+            mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
             # Optimize the model
             gp_model.train()
@@ -146,7 +146,7 @@ class TestKISSGPRegression(unittest.TestCase):
 
             optimizer = optim.Adam(gp_model.parameters(), lr=0.1)
             optimizer.n_iter = 0
-            with gpytorch.settings.debug(False):
+            with Lgpytorch.settings.debug(False):
                 for _ in range(25):
                     optimizer.zero_grad()
                     output = gp_model(train_x)

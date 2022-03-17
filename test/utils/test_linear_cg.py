@@ -6,7 +6,7 @@ import unittest
 
 import torch
 
-from gpytorch.utils.linear_cg import linear_cg
+from Lgpytorch.utils.linear_cg import linear_cg
 
 
 class TestLinearCG(unittest.TestCase):

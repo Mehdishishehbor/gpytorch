@@ -2,8 +2,8 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import SpectralDeltaKernel
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import SpectralDeltaKernel
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestSpectralDeltaKernel(unittest.TestCase, BaseKernelTestCase):

@@ -5,11 +5,11 @@ import random
 import unittest
 from math import pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.likelihoods import BernoulliLikelihood
-from gpytorch.models import ApproximateGP
-from gpytorch.variational import CholeskyVariationalDistribution, UnwhitenedVariationalStrategy
+from Lgpytorch.likelihoods import BernoulliLikelihood
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.variational import CholeskyVariationalDistribution, UnwhitenedVariationalStrategy
 from torch import optim
 
 
@@ -26,13 +26,13 @@ class GPClassificationModel(ApproximateGP):
             self, train_x, variational_distribution, learn_inducing_locations=False
         )
         super(GPClassificationModel, self).__init__(variational_strategy)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
         return latent_pred
 
 
@@ -51,7 +51,7 @@ class TestSimpleGPClassification(unittest.TestCase):
         train_x, train_y = train_data()
         likelihood = BernoulliLikelihood()
         model = GPClassificationModel(train_x)
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
 
         # Find optimal model hyperparameters
         model.train()

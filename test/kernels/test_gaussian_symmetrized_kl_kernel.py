@@ -5,8 +5,8 @@ import unittest
 import torch
 from torch.distributions import Normal, kl_divergence
 
-from gpytorch.kernels import GaussianSymmetrizedKLKernel
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import GaussianSymmetrizedKLKernel
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestGaussianSymmetrizedKLKernel(unittest.TestCase, BaseKernelTestCase):

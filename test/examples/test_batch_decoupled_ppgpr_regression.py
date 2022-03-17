@@ -4,11 +4,11 @@ import math
 import unittest
 from unittest.mock import MagicMock, patch
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.models import ApproximateGP
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.test.base_test_case import BaseTestCase
 from torch import optim
 
 
@@ -20,10 +20,10 @@ def train_data():
 
 class SVGPRegressionModel(ApproximateGP):
     def __init__(self, inducing_points, base_inducing_points):
-        base_variational_distribution = gpytorch.variational.MeanFieldVariationalDistribution(
+        base_variational_distribution = Lgpytorch.variational.MeanFieldVariationalDistribution(
             base_inducing_points.size(-1)
         )
-        variational_strategy = gpytorch.variational.BatchDecoupledVariationalStrategy(
+        variational_strategy = Lgpytorch.variational.BatchDecoupledVariationalStrategy(
             self,
             base_inducing_points,
             base_variational_distribution,
@@ -31,16 +31,16 @@ class SVGPRegressionModel(ApproximateGP):
             mean_var_batch_dim=-1,
         )
         super(SVGPRegressionModel, self).__init__(variational_strategy)
-        self.mean_module = gpytorch.means.ConstantMean(batch_shape=torch.Size([2]))
-        self.covar_module = gpytorch.kernels.ScaleKernel(
-            gpytorch.kernels.RBFKernel(batch_shape=torch.Size([2])),
+        self.mean_module = Lgpytorch.means.ConstantMean(batch_shape=torch.Size([2]))
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(
+            Lgpytorch.kernels.RBFKernel(batch_shape=torch.Size([2])),
             batch_shape=torch.Size([2]),
         )
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
         return latent_pred
 
 
@@ -51,14 +51,14 @@ class TestPPGPRRegression(BaseTestCase, unittest.TestCase):
         train_x, train_y = train_data()
         likelihood = GaussianLikelihood()
         model = SVGPRegressionModel(torch.linspace(0, 1, 128), torch.linspace(0, 1, 16))
-        mll = gpytorch.mlls.PredictiveLogLikelihood(likelihood, model, num_data=len(train_y))
+        mll = Lgpytorch.mlls.PredictiveLogLikelihood(likelihood, model, num_data=len(train_y))
 
         # Find optimal model hyperparameters
         model.train()
         likelihood.train()
         optimizer = optim.Adam([{"params": model.parameters()}, {"params": likelihood.parameters()}], lr=0.01)
 
-        _wrapped_cg = MagicMock(wraps=gpytorch.utils.linear_cg)
+        _wrapped_cg = MagicMock(wraps=Lgpytorch.utils.linear_cg)
         _cg_mock = patch("gpytorch.utils.linear_cg", new=_wrapped_cg)
         with _cg_mock as cg_mock:
             for _ in range(75):

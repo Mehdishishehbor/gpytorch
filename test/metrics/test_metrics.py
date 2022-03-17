@@ -3,19 +3,19 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.distributions import MultitaskMultivariateNormal, MultivariateNormal
-from gpytorch.kernels import MultitaskKernel, RBFKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood, MultitaskGaussianLikelihood
-from gpytorch.means import ConstantMean, MultitaskMean
-from gpytorch.metrics import (  # average_coverage_error,
+import Lgpytorch
+from Lgpytorch.distributions import MultitaskMultivariateNormal, MultivariateNormal
+from Lgpytorch.kernels import MultitaskKernel, RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood, MultitaskGaussianLikelihood
+from Lgpytorch.means import ConstantMean, MultitaskMean
+from Lgpytorch.metrics import (  # average_coverage_error,
     mean_absolute_error,
     mean_squared_error,
     mean_standardized_log_loss,
     negative_log_predictive_density,
     quantile_coverage_error,
 )
-from gpytorch.models import ExactGP
+from Lgpytorch.models import ExactGP
 
 
 class ExactGPModel(ExactGP):
@@ -77,7 +77,7 @@ class TestMetricsSingleTask(unittest.TestCase):
         return metric(pred_dist, labels, **kwargs)
 
     def train_model(self, model, train_x, train_y):
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(model.likelihood, model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(model.likelihood, model)
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
         model.train()
         model.likelihood.train()

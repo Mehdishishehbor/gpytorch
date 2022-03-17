@@ -6,14 +6,14 @@ import unittest
 import warnings
 from math import pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import RFFKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.utils.warnings import NumericalWarning
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RFFKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.utils.warnings import NumericalWarning
 from torch import optim
 
 
@@ -33,7 +33,7 @@ def make_data(cuda=False):
     return train_x, train_y, test_x, test_y
 
 
-class GPRegressionModel(gpytorch.models.ExactGP):
+class GPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1e-5, 1e-5))
@@ -65,7 +65,7 @@ class TestRFFRegression(unittest.TestCase):
         train_x, train_y, test_x, test_y = make_data()
         likelihood = GaussianLikelihood()
         gp_model = GPRegressionModel(train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Optimize the model
         gp_model.train()
@@ -81,7 +81,7 @@ class TestRFFRegression(unittest.TestCase):
 
             # Check that we have the right LazyTensor type
             kernel = likelihood(gp_model(train_x)).lazy_covariance_matrix.evaluate_kernel()
-            self.assertIsInstance(kernel, gpytorch.lazy.LowRankRootAddedDiagLazyTensor)
+            self.assertIsInstance(kernel, Lgpytorch.lazy.LowRankRootAddedDiagLazyTensor)
 
         for param in gp_model.parameters():
             self.assertTrue(param.grad is not None)

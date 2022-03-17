@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.optim import NGD
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.optim import NGD
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 class TestNGD(unittest.TestCase, BaseTestCase):

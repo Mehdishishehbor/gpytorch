@@ -7,25 +7,25 @@ import random
 import torch
 import unittest
 
-import gpytorch
+import Lgpytorch
 from torch import optim
-from gpytorch.kernels import RBFKernel, ScaleKernel
-from gpytorch.likelihoods import BernoulliLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import BernoulliLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
 
 
 train_x = torch.linspace(0, 1, 10)
 train_y = torch.sign(torch.cos(train_x * (16 * pi))).add(1).div(2)
 
 
-class GPClassificationModel(gpytorch.models.ApproximateGP):
+class GPClassificationModel(Lgpytorch.models.ApproximateGP):
     def __init__(self, grid_size=32, grid_bounds=[(0, 1)]):
-        variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
+        variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(
             num_inducing_points=int(pow(grid_size, len(grid_bounds)))
         )
-        variational_strategy = gpytorch.variational.GridInterpolationVariationalStrategy(
+        variational_strategy = Lgpytorch.variational.GridInterpolationVariationalStrategy(
             self, grid_size=grid_size, grid_bounds=grid_bounds, variational_distribution=variational_distribution
         )
         super(GPClassificationModel, self).__init__(variational_strategy)
@@ -58,7 +58,7 @@ class TestKISSGPClassification(unittest.TestCase):
     def test_kissgp_classification_error(self):
         model = GPClassificationModel()
         likelihood = BernoulliLikelihood()
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
 
         # Find optimal model hyperparameters
         model.train()

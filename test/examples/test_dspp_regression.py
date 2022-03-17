@@ -1,13 +1,13 @@
-import gpytorch
+import Lgpytorch
 import torch
 import unittest
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean, LinearMean
-from gpytorch.kernels import ScaleKernel, MaternKernel
-from gpytorch.variational import VariationalStrategy
-from gpytorch.variational import MeanFieldVariationalDistribution
-from gpytorch.models.deep_gps.dspp import DSPPLayer, DSPP
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean, LinearMean
+from Lgpytorch.kernels import ScaleKernel, MaternKernel
+from Lgpytorch.variational import VariationalStrategy
+from Lgpytorch.variational import MeanFieldVariationalDistribution
+from Lgpytorch.models.deep_gps.dspp import DSPPLayer, DSPP
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 train_n = 20
@@ -59,7 +59,7 @@ class DSPPHiddenLayer(DSPPLayer):
     def forward(self, x, mean_input=None, **kwargs):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class ThreeLayerDSPP(DSPP):
@@ -112,7 +112,7 @@ class TestSGPRRegression(unittest.TestCase, BaseTestCase):
         model.train()
 
         adam = torch.optim.Adam([{"params": model.parameters()}], lr=initial_lr, betas=(0.9, 0.999))
-        objective = gpytorch.mlls.DeepPredictiveLogLikelihood(model.likelihood, model, num_data=train_n, beta=0.05)
+        objective = Lgpytorch.mlls.DeepPredictiveLogLikelihood(model.likelihood, model, num_data=train_n, beta=0.05)
 
         epochs_iter = range(num_epochs)
         losses = []

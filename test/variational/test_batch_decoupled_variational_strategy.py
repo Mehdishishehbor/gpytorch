@@ -4,22 +4,22 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.test.variational_test_case import VariationalTestCase
+import Lgpytorch
+from Lgpytorch.test.variational_test_case import VariationalTestCase
 
 
 def likelihood_cls():
-    return gpytorch.likelihoods.GaussianLikelihood()
+    return Lgpytorch.likelihoods.GaussianLikelihood()
 
 
 def strategy_cls(model, inducing_points, variational_distribution, learn_inducing_locations):
-    return gpytorch.variational.BatchDecoupledVariationalStrategy(
+    return Lgpytorch.variational.BatchDecoupledVariationalStrategy(
         model, inducing_points, variational_distribution, learn_inducing_locations
     )
 
 
 def batch_dim_strategy_cls(model, inducing_points, variational_distribution, learn_inducing_locations):
-    return gpytorch.variational.BatchDecoupledVariationalStrategy(
+    return Lgpytorch.variational.BatchDecoupledVariationalStrategy(
         model, inducing_points, variational_distribution, learn_inducing_locations, mean_var_batch_dim=-1
     )
 
@@ -31,7 +31,7 @@ class TestBatchDecoupledVariationalGP(VariationalTestCase, unittest.TestCase):
 
     @property
     def distribution_cls(self):
-        return gpytorch.variational.CholeskyVariationalDistribution
+        return Lgpytorch.variational.CholeskyVariationalDistribution
 
     @property
     def likelihood_cls(self):
@@ -39,7 +39,7 @@ class TestBatchDecoupledVariationalGP(VariationalTestCase, unittest.TestCase):
 
     @property
     def mll_cls(self):
-        return gpytorch.mlls.VariationalELBO
+        return Lgpytorch.mlls.VariationalELBO
 
     @property
     def strategy_cls(self):
@@ -61,31 +61,31 @@ class TestBatchDecoupledVariationalGP(VariationalTestCase, unittest.TestCase):
 class TestBatchDecoupledPredictiveGP(TestBatchDecoupledVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.PredictiveLogLikelihood
+        return Lgpytorch.mlls.PredictiveLogLikelihood
 
 
 class TestBatchDecoupledRobustVGP(TestBatchDecoupledVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.GammaRobustVariationalELBO
+        return Lgpytorch.mlls.GammaRobustVariationalELBO
 
 
 class TestMeanFieldBatchDecoupledVariationalGP(TestBatchDecoupledVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldBatchDecoupledPredictiveGP(TestBatchDecoupledPredictiveGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldBatchDecoupledRobustVGP(TestBatchDecoupledRobustVGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestBatchDecoupledVariationalGPBatchDim(TestBatchDecoupledVariationalGP, unittest.TestCase):
@@ -94,11 +94,11 @@ class TestBatchDecoupledVariationalGPBatchDim(TestBatchDecoupledVariationalGP, u
         num_inducing=16,
         batch_shape=torch.Size([]),
         inducing_batch_shape=torch.Size([]),
-        strategy_cls=gpytorch.variational.VariationalStrategy,
-        distribution_cls=gpytorch.variational.CholeskyVariationalDistribution,
+        strategy_cls=Lgpytorch.variational.VariationalStrategy,
+        distribution_cls=Lgpytorch.variational.CholeskyVariationalDistribution,
         constant_mean=True,
     ):
-        class _SVGPRegressionModel(gpytorch.models.ApproximateGP):
+        class _SVGPRegressionModel(Lgpytorch.models.ApproximateGP):
             def __init__(self, inducing_points):
                 variational_distribution = distribution_cls(num_inducing, batch_shape=batch_shape)
                 variational_strategy = strategy_cls(
@@ -106,19 +106,19 @@ class TestBatchDecoupledVariationalGPBatchDim(TestBatchDecoupledVariationalGP, u
                 )
                 super().__init__(variational_strategy)
                 if constant_mean:
-                    self.mean_module = gpytorch.means.ConstantMean(batch_shape=batch_shape + torch.Size([2]))
+                    self.mean_module = Lgpytorch.means.ConstantMean(batch_shape=batch_shape + torch.Size([2]))
                     self.mean_module.initialize(constant=1.0)
                 else:
-                    self.mean_module = gpytorch.means.ZeroMean()
-                self.covar_module = gpytorch.kernels.ScaleKernel(
-                    gpytorch.kernels.RBFKernel(batch_shape=batch_shape + torch.Size([2])),
+                    self.mean_module = Lgpytorch.means.ZeroMean()
+                self.covar_module = Lgpytorch.kernels.ScaleKernel(
+                    Lgpytorch.kernels.RBFKernel(batch_shape=batch_shape + torch.Size([2])),
                     batch_shape=batch_shape + torch.Size([2]),
                 )
 
             def forward(self, x):
                 mean_x = self.mean_module(x)
                 covar_x = self.covar_module(x)
-                latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+                latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
                 return latent_pred
 
         inducing_points = torch.randn(num_inducing, 2).repeat(*inducing_batch_shape, 1, 1)
@@ -126,17 +126,17 @@ class TestBatchDecoupledVariationalGPBatchDim(TestBatchDecoupledVariationalGP, u
 
     @property
     def distribution_cls(self):
-        return gpytorch.variational.CholeskyVariationalDistribution
+        return Lgpytorch.variational.CholeskyVariationalDistribution
 
     @property
     def mll_cls(self):
-        return gpytorch.mlls.PredictiveLogLikelihood
+        return Lgpytorch.mlls.PredictiveLogLikelihood
 
 
 class TestMeanFieldBatchDecoupledVariationalGPBatchDim(TestBatchDecoupledVariationalGPBatchDim, unittest.TestCase):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestBatchDecoupledVariationalGPOtherBatchDim(TestBatchDecoupledVariationalGP, unittest.TestCase):
@@ -145,11 +145,11 @@ class TestBatchDecoupledVariationalGPOtherBatchDim(TestBatchDecoupledVariational
         num_inducing=16,
         batch_shape=torch.Size([]),
         inducing_batch_shape=torch.Size([]),
-        strategy_cls=gpytorch.variational.VariationalStrategy,
-        distribution_cls=gpytorch.variational.CholeskyVariationalDistribution,
+        strategy_cls=Lgpytorch.variational.VariationalStrategy,
+        distribution_cls=Lgpytorch.variational.CholeskyVariationalDistribution,
         constant_mean=True,
     ):
-        class _SVGPRegressionModel(gpytorch.models.ApproximateGP):
+        class _SVGPRegressionModel(Lgpytorch.models.ApproximateGP):
             def __init__(self, inducing_points):
                 variational_distribution = distribution_cls(num_inducing, batch_shape=batch_shape)
                 variational_strategy = strategy_cls(
@@ -157,21 +157,21 @@ class TestBatchDecoupledVariationalGPOtherBatchDim(TestBatchDecoupledVariational
                 )
                 super().__init__(variational_strategy)
                 if constant_mean:
-                    self.mean_module = gpytorch.means.ConstantMean(
+                    self.mean_module = Lgpytorch.means.ConstantMean(
                         batch_shape=batch_shape[:-1] + torch.Size([2]) + batch_shape[-1:]
                     )
                     self.mean_module.initialize(constant=1.0)
                 else:
-                    self.mean_module = gpytorch.means.ZeroMean()
-                self.covar_module = gpytorch.kernels.ScaleKernel(
-                    gpytorch.kernels.RBFKernel(batch_shape=batch_shape[:-1] + torch.Size([2]) + batch_shape[-1:]),
+                    self.mean_module = Lgpytorch.means.ZeroMean()
+                self.covar_module = Lgpytorch.kernels.ScaleKernel(
+                    Lgpytorch.kernels.RBFKernel(batch_shape=batch_shape[:-1] + torch.Size([2]) + batch_shape[-1:]),
                     batch_shape=batch_shape[:-1] + torch.Size([2]) + batch_shape[-1:],
                 )
 
             def forward(self, x):
                 mean_x = self.mean_module(x)
                 covar_x = self.covar_module(x)
-                latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+                latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
                 return latent_pred
 
         inducing_points = torch.randn(num_inducing, 2).repeat(*inducing_batch_shape, 1, 1)
@@ -180,7 +180,7 @@ class TestBatchDecoupledVariationalGPOtherBatchDim(TestBatchDecoupledVariational
     @property
     def strategy_cls(self):
         def _batch_dim_strategy_cls(model, inducing_points, variational_distribution, learn_inducing_locations):
-            return gpytorch.variational.BatchDecoupledVariationalStrategy(
+            return Lgpytorch.variational.BatchDecoupledVariationalStrategy(
                 model, inducing_points, variational_distribution, learn_inducing_locations, mean_var_batch_dim=-2
             )
 

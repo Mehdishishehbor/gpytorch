@@ -6,10 +6,10 @@ import unittest
 
 import torch
 
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.lazy import DiagLazyTensor
-from gpytorch.test.utils import least_used_cuda_device
-from gpytorch.utils.quadrature import GaussHermiteQuadrature1D
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.lazy import DiagLazyTensor
+from Lgpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.utils.quadrature import GaussHermiteQuadrature1D
 
 
 class TestQuadrature(unittest.TestCase):

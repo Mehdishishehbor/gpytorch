@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import InterpolatedLazyTensor, NonLazyTensor
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, RectangularLazyTensorTestCase
+from Lgpytorch.lazy import InterpolatedLazyTensor, NonLazyTensor
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, RectangularLazyTensorTestCase
 
 
 class TestInterpolatedLazyTensor(LazyTensorTestCase, unittest.TestCase):

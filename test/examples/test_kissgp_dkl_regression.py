@@ -7,13 +7,13 @@ import random
 import torch
 import unittest
 
-import gpytorch
+import Lgpytorch
 from torch import optim, nn
-from gpytorch.kernels import RBFKernel, GridInterpolationKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RBFKernel, GridInterpolationKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
 
 
 # Simple training data: let's try to learn a sine function,
@@ -45,7 +45,7 @@ class SmallFeatureExtractor(nn.Sequential):
 feature_extractor = SmallFeatureExtractor()
 
 
-class GPRegressionModel(gpytorch.models.ExactGP):
+class GPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1e-5, 1e-5))
@@ -77,7 +77,7 @@ class TestDKLRegression(unittest.TestCase):
         train_x, train_y, test_x, test_y = make_data()
         likelihood = GaussianLikelihood()
         gp_model = GPRegressionModel(train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
         # Optimize the model
         gp_model.train()
@@ -85,7 +85,7 @@ class TestDKLRegression(unittest.TestCase):
 
         optimizer = optim.Adam(gp_model.parameters(), lr=0.1)
         optimizer.n_iter = 0
-        with gpytorch.settings.debug(False):
+        with Lgpytorch.settings.debug(False):
             for _ in range(30):
                 optimizer.zero_grad()
                 output = gp_model(train_x)
@@ -108,11 +108,11 @@ class TestDKLRegression(unittest.TestCase):
             self.assertLess(mean_abs_error.squeeze().item(), 0.15)
 
     def test_dkl_gp_fast_pred_var(self):
-        with gpytorch.settings.fast_pred_var(), gpytorch.settings.debug(False):
+        with Lgpytorch.settings.fast_pred_var(), Lgpytorch.settings.debug(False):
             train_x, train_y, test_x, test_y = make_data()
             likelihood = GaussianLikelihood()
             gp_model = GPRegressionModel(train_x, train_y, likelihood)
-            mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+            mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
             # Optimize the model
             gp_model.train()

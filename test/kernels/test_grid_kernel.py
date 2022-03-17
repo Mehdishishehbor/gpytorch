@@ -4,10 +4,10 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.kernels import GridKernel, LinearKernel, RBFKernel
-from gpytorch.lazy import KroneckerProductLazyTensor
-from gpytorch.utils.grid import create_data_from_grid
+import Lgpytorch
+from Lgpytorch.kernels import GridKernel, LinearKernel, RBFKernel
+from Lgpytorch.lazy import KroneckerProductLazyTensor
+from Lgpytorch.utils.grid import create_data_from_grid
 
 grid = [torch.linspace(0, 1, 5), torch.linspace(0, 2, 3)]
 d = len(grid)
@@ -16,7 +16,7 @@ grid_data = create_data_from_grid(grid)
 
 class TestGridKernel(unittest.TestCase):
     def test_grid_grid(self, toeplitz=True):
-        with gpytorch.settings.use_toeplitz(toeplitz):
+        with Lgpytorch.settings.use_toeplitz(toeplitz):
             base_kernel = RBFKernel(ard_num_dims=2)
             kernel = GridKernel(base_kernel, grid)
             grid_covar = kernel(grid_data, grid_data).evaluate_kernel()
@@ -29,7 +29,7 @@ class TestGridKernel(unittest.TestCase):
         return self.test_grid_grid(toeplitz=False)
 
     def test_nongrid_grid(self, toeplitz=True):
-        with gpytorch.settings.use_toeplitz(toeplitz):
+        with Lgpytorch.settings.use_toeplitz(toeplitz):
             base_kernel = RBFKernel(ard_num_dims=2)
             data = torch.randn(5, d)
             kernel = GridKernel(base_kernel, grid)
@@ -41,7 +41,7 @@ class TestGridKernel(unittest.TestCase):
         return self.test_nongrid_grid(toeplitz=False)
 
     def test_nongrid_nongrid(self, toeplitz=True):
-        with gpytorch.settings.use_toeplitz(toeplitz):
+        with Lgpytorch.settings.use_toeplitz(toeplitz):
             base_kernel = RBFKernel(ard_num_dims=2)
             data = torch.randn(5, d)
             kernel = GridKernel(base_kernel, grid)

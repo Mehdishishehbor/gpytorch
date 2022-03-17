@@ -7,10 +7,10 @@ import unittest
 
 import torch
 
-from gpytorch.distributions import MultitaskMultivariateNormal, MultivariateNormal
-from gpytorch.lazy import DiagLazyTensor
-from gpytorch.test.base_test_case import BaseTestCase
-from gpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.distributions import MultitaskMultivariateNormal, MultivariateNormal
+from Lgpytorch.lazy import DiagLazyTensor
+from Lgpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.test.utils import least_used_cuda_device
 
 
 class TestMultiTaskMultivariateNormal(BaseTestCase, unittest.TestCase):

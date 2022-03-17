@@ -3,20 +3,20 @@
 import unittest
 from math import exp, pi
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import RBFKernel, ScaleKernel
-from gpytorch.likelihoods import FixedNoiseGaussianLikelihood
-from gpytorch.likelihoods.noise_models import FixedGaussianNoise
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.test.base_test_case import BaseTestCase
-from gpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import FixedNoiseGaussianLikelihood
+from Lgpytorch.likelihoods.noise_models import FixedGaussianNoise
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.test.utils import least_used_cuda_device
 from torch import optim
 
 
-class ExactGPModel(gpytorch.models.ExactGP):
+class ExactGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_inputs, train_targets, likelihood):
         super(ExactGPModel, self).__init__(train_inputs, train_targets, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1, 1))
@@ -54,7 +54,7 @@ class TestFixedNoiseFantasies(BaseTestCase, unittest.TestCase):
 
         likelihood = FixedNoiseGaussianLikelihood(noise)
         gp_model = ExactGPModel(train_x, train_y, likelihood)
-        mll = gpytorch.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.ExactMarginalLogLikelihood(likelihood, gp_model)
         gp_model.covar_module.base_kernel.initialize(lengthscale=exp(1))
         gp_model.mean_module.initialize(constant=0)
 
@@ -68,7 +68,7 @@ class TestFixedNoiseFantasies(BaseTestCase, unittest.TestCase):
         optimizer = optim.Adam(gp_model.parameters(), lr=0.15)
         for _ in range(50):
             optimizer.zero_grad()
-            with gpytorch.settings.debug(False):
+            with Lgpytorch.settings.debug(False):
                 output = gp_model(train_x)
             loss = -mll(output, train_y)
             loss.backward()
@@ -81,7 +81,7 @@ class TestFixedNoiseFantasies(BaseTestCase, unittest.TestCase):
 
         train_x.requires_grad = True
         gp_model.set_train_data(train_x, train_y)
-        with gpytorch.settings.fast_pred_var(), gpytorch.settings.detach_test_caches(False):
+        with Lgpytorch.settings.fast_pred_var(), Lgpytorch.settings.detach_test_caches(False):
             # Test the model
             gp_model.eval()
             likelihood.eval()
@@ -123,7 +123,7 @@ class TestFixedNoiseFantasies(BaseTestCase, unittest.TestCase):
 
         likelihood = FixedNoiseGaussianLikelihood(noise)
         gp_model = ExactGPModel(train_x, train_y, likelihood)
-        mll = gpytorch.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.ExactMarginalLogLikelihood(likelihood, gp_model)
         gp_model.covar_module.base_kernel.initialize(lengthscale=exp(1))
         gp_model.mean_module.initialize(constant=0)
 
@@ -137,7 +137,7 @@ class TestFixedNoiseFantasies(BaseTestCase, unittest.TestCase):
         optimizer = optim.Adam(gp_model.parameters(), lr=0.15)
         for _ in range(50):
             optimizer.zero_grad()
-            with gpytorch.settings.debug(False):
+            with Lgpytorch.settings.debug(False):
                 output = gp_model(train_x)
             loss = -mll(output, train_y)
             loss.backward()
@@ -148,7 +148,7 @@ class TestFixedNoiseFantasies(BaseTestCase, unittest.TestCase):
             self.assertGreater(param.grad.norm().item(), 0)
         optimizer.step()
 
-        with gpytorch.settings.fast_pred_var():
+        with Lgpytorch.settings.fast_pred_var():
             # Test the model
             gp_model.eval()
             likelihood.eval()

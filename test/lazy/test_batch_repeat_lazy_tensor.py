@@ -4,9 +4,9 @@ import unittest
 
 import torch
 
-from gpytorch import lazify
-from gpytorch.lazy import BatchRepeatLazyTensor, ToeplitzLazyTensor
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, RectangularLazyTensorTestCase
+from Lgpytorch import lazify
+from Lgpytorch.lazy import BatchRepeatLazyTensor, ToeplitzLazyTensor
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, RectangularLazyTensorTestCase
 
 
 class TestBatchRepeatLazyTensor(LazyTensorTestCase, unittest.TestCase):

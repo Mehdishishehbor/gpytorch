@@ -2,8 +2,8 @@
 
 import unittest
 
-from gpytorch.kernels import PolynomialKernelGrad
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import PolynomialKernelGrad
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestPolynomialKernel(unittest.TestCase, BaseKernelTestCase):

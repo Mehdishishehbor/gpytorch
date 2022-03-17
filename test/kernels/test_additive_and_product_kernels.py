@@ -5,38 +5,38 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.kernels import LinearKernel, MaternKernel, RBFKernel, RFFKernel
+import Lgpytorch
+from Lgpytorch.kernels import LinearKernel, MaternKernel, RBFKernel, RFFKernel
 
 
-class TestModel(gpytorch.models.ExactGP):
+class TestModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
         super().__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ZeroMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(
+        self.mean_module = Lgpytorch.means.ZeroMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(
             RFFKernel(active_dims=[0], num_samples=10) + MaternKernel(nu=2.5, active_dims=[1, 2])
         )
 
     def forward(self, input):
         mean = self.mean_module(input)
         covar = self.covar_module(input)
-        return gpytorch.distributions.MultivariateNormal(mean, covar)
+        return Lgpytorch.distributions.MultivariateNormal(mean, covar)
 
 
-class TestModelNoStructure(gpytorch.models.ExactGP):
+class TestModelNoStructure(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
         super().__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ZeroMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(
+        self.mean_module = Lgpytorch.means.ZeroMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(
             RBFKernel(active_dims=[0], num_samples=10) + MaternKernel(nu=2.5, active_dims=[1, 2])
         )
 
     def forward(self, input):
         mean = self.mean_module(input)
         covar = self.covar_module(input)
-        return gpytorch.distributions.MultivariateNormal(mean, covar)
+        return Lgpytorch.distributions.MultivariateNormal(mean, covar)
 
 
 class TestAdditiveAndProductKernel(unittest.TestCase):
@@ -335,12 +335,12 @@ class TestAdditiveAndProductKernel(unittest.TestCase):
         # Make sure that the prior kernel is the correct type
         model.train()
         output = model(train_x).lazy_covariance_matrix.evaluate_kernel()
-        self.assertIsInstance(output, gpytorch.lazy.SumLazyTensor)
+        self.assertIsInstance(output, Lgpytorch.lazy.SumLazyTensor)
 
         # Make sure that the prior predictive kernel is the correct type
         model.train()
         output = model.likelihood(model(train_x)).lazy_covariance_matrix.evaluate_kernel()
-        self.assertIsInstance(output, gpytorch.lazy.AddedDiagLazyTensor)
+        self.assertIsInstance(output, Lgpytorch.lazy.AddedDiagLazyTensor)
 
     def test_kernel_output_no_structure(self):
         train_x = torch.randn(1000, 3)
@@ -350,12 +350,12 @@ class TestAdditiveAndProductKernel(unittest.TestCase):
         # Make sure that the prior kernel is the correct type
         model.train()
         output = model(train_x).lazy_covariance_matrix.evaluate_kernel()
-        self.assertIsInstance(output, gpytorch.lazy.ConstantMulLazyTensor)
+        self.assertIsInstance(output, Lgpytorch.lazy.ConstantMulLazyTensor)
 
         # Make sure that the prior predictive kernel is the correct type
         model.train()
         output = model.likelihood(model(train_x)).lazy_covariance_matrix.evaluate_kernel()
-        self.assertIsInstance(output, gpytorch.lazy.AddedDiagLazyTensor)
+        self.assertIsInstance(output, Lgpytorch.lazy.AddedDiagLazyTensor)
 
     def test_initialize(self):
         kernel_1 = RBFKernel().initialize(lengthscale=1)

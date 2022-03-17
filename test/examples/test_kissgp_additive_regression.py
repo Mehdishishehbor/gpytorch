@@ -5,12 +5,12 @@ import os
 import torch
 import unittest
 
-import gpytorch
+import Lgpytorch
 from torch import optim
-from gpytorch.kernels import RBFKernel, AdditiveStructureKernel, GridInterpolationKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ZeroMean
-from gpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RBFKernel, AdditiveStructureKernel, GridInterpolationKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ZeroMean
+from Lgpytorch.distributions import MultivariateNormal
 
 n = 20
 train_x = torch.zeros(pow(n, 2), 2)
@@ -31,7 +31,7 @@ test_y = torch.sin(test_x[:, 0]) + torch.cos(test_x[:, 1])
 
 
 # All tests that pass with the exact kernel should pass with the interpolated kernel.
-class GPRegressionModel(gpytorch.models.ExactGP):
+class GPRegressionModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(GPRegressionModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = ZeroMean()
@@ -62,10 +62,10 @@ class TestKISSGPAdditiveRegression(unittest.TestCase):
     def test_kissgp_gp_mean_abs_error(self, toeplitz=False):
         likelihood = GaussianLikelihood()
         gp_model = GPRegressionModel(train_x, train_y, likelihood)
-        mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
+        mll = Lgpytorch.mlls.ExactMarginalLogLikelihood(likelihood, gp_model)
 
-        with gpytorch.settings.max_preconditioner_size(10), gpytorch.settings.max_cg_iterations(50):
-            with gpytorch.settings.fast_pred_var(), gpytorch.settings.use_toeplitz(toeplitz):
+        with Lgpytorch.settings.max_preconditioner_size(10), Lgpytorch.settings.max_cg_iterations(50):
+            with Lgpytorch.settings.fast_pred_var(), Lgpytorch.settings.use_toeplitz(toeplitz):
                 # Optimize the model
                 gp_model.train()
                 likelihood.train()

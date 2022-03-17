@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch import utils
-from gpytorch.test.utils import approx_equal
+from Lgpytorch import utils
+from Lgpytorch.test.utils import approx_equal
 
 
 class TestToeplitz(unittest.TestCase):

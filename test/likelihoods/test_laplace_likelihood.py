@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.likelihoods import LaplaceLikelihood, _OneDimensionalLikelihood
-from gpytorch.test.base_likelihood_test_case import BaseLikelihoodTestCase
+from Lgpytorch.likelihoods import LaplaceLikelihood, _OneDimensionalLikelihood
+from Lgpytorch.test.base_likelihood_test_case import BaseLikelihoodTestCase
 
 
 class TestLaplaceLikelihood(BaseLikelihoodTestCase, unittest.TestCase):

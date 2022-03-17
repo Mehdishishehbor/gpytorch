@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import BlockDiagLazyTensor, NonLazyTensor
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
+from Lgpytorch.lazy import BlockDiagLazyTensor, NonLazyTensor
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
 
 
 class TestBlockDiagLazyTensor(LazyTensorTestCase, unittest.TestCase):

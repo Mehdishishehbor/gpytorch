@@ -5,8 +5,8 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import PeriodicKernel
-from gpytorch.priors import NormalPrior
+from Lgpytorch.kernels import PeriodicKernel
+from Lgpytorch.priors import NormalPrior
 
 
 class TestPeriodicKernel(unittest.TestCase):

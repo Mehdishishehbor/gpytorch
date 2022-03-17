@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.means import ConstantMeanGrad
-from gpytorch.test.base_mean_test_case import BaseMeanTestCase
+from Lgpytorch.means import ConstantMeanGrad
+from Lgpytorch.test.base_mean_test_case import BaseMeanTestCase
 
 
 class TestConstantMeanGrad(BaseMeanTestCase, unittest.TestCase):

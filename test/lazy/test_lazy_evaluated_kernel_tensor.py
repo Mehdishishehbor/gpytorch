@@ -6,22 +6,22 @@ from unittest.mock import MagicMock, patch
 
 import torch
 
-import gpytorch
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, _ensure_symmetric_grad
+import Lgpytorch
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, _ensure_symmetric_grad
 
 
 class TestLazyEvaluatedKernelTensorBatch(LazyTensorTestCase, unittest.TestCase):
     seed = 0
 
     def create_lazy_tensor(self):
-        kern = gpytorch.kernels.RBFKernel()
+        kern = Lgpytorch.kernels.RBFKernel()
         mat1 = torch.randn(2, 5, 6)
         mat2 = mat1.detach().clone()
         return kern(mat1, mat2)
 
     def evaluate_lazy_tensor(self, lazy_tensor):
-        with gpytorch.settings.lazily_evaluate_kernels(False):
-            return gpytorch.lazy.delazify(lazy_tensor.kernel(lazy_tensor.x1, lazy_tensor.x2))
+        with Lgpytorch.settings.lazily_evaluate_kernels(False):
+            return Lgpytorch.lazy.delazify(lazy_tensor.kernel(lazy_tensor.x1, lazy_tensor.x2))
 
     def _test_matmul(self, rhs):
         lazy_tensor = self.create_lazy_tensor().requires_grad_(True)
@@ -72,9 +72,9 @@ class TestLazyEvaluatedKernelTensorBatch(LazyTensorTestCase, unittest.TestCase):
             lhs.requires_grad_(True)
             lhs_copy = lhs.clone().detach().requires_grad_(True)
 
-        _wrapped_cg = MagicMock(wraps=gpytorch.utils.linear_cg)
+        _wrapped_cg = MagicMock(wraps=Lgpytorch.utils.linear_cg)
         with patch("gpytorch.utils.linear_cg", new=_wrapped_cg) as linear_cg_mock:
-            with gpytorch.settings.max_cholesky_size(math.inf if cholesky else 0), gpytorch.settings.cg_tolerance(1e-4):
+            with Lgpytorch.settings.max_cholesky_size(math.inf if cholesky else 0), Lgpytorch.settings.cg_tolerance(1e-4):
                 # Perform the inv_matmul
                 if lhs is not None:
                     res = lazy_tensor.inv_matmul(rhs, lhs)
@@ -113,7 +113,7 @@ class TestLazyEvaluatedKernelTensorBatch(LazyTensorTestCase, unittest.TestCase):
 
         test_vector = torch.randn(2, 5, 6)
         test_vector_copy = test_vector.clone()
-        with gpytorch.beta_features.checkpoint_kernel(2):
+        with Lgpytorch.beta_features.checkpoint_kernel(2):
             res = lazy_tensor.inv_matmul(test_vector)
             actual = evaluated.inverse().matmul(test_vector_copy)
             self.assertLess(((res - actual).abs() / actual.abs().clamp(1, 1e5)).max().item(), 3e-1)
@@ -133,7 +133,7 @@ class TestLazyEvaluatedKernelTensorBatch(LazyTensorTestCase, unittest.TestCase):
         data"""
         x1 = torch.randn(5, 6)
         x2 = torch.randn(5, 6)
-        kern = gpytorch.kernels.RBFKernel(batch_shape=torch.Size([2]))
+        kern = Lgpytorch.kernels.RBFKernel(batch_shape=torch.Size([2]))
         k = kern(x1, x2)
         self.assertEqual(k.size(), torch.Size([2, 5, 5]))
         self.assertEqual(k[..., :4, :3].size(), torch.Size([2, 4, 3]))
@@ -158,7 +158,7 @@ class TestLazyEvaluatedKernelTensorMultitaskBatch(TestLazyEvaluatedKernelTensorB
     skip_slq_tests = True  # we skip these because of the kronecker structure
 
     def create_lazy_tensor(self):
-        kern = gpytorch.kernels.MultitaskKernel(gpytorch.kernels.RBFKernel(), num_tasks=3, rank=2)
+        kern = Lgpytorch.kernels.MultitaskKernel(Lgpytorch.kernels.RBFKernel(), num_tasks=3, rank=2)
         mat1 = torch.randn(2, 5, 6)
         mat2 = mat1.detach().clone()
         return kern(mat1, mat2)
@@ -178,14 +178,14 @@ class TestLazyEvaluatedKernelTensorAdditive(TestLazyEvaluatedKernelTensorBatch):
     seed = 0
 
     def create_lazy_tensor(self):
-        kern = gpytorch.kernels.AdditiveStructureKernel(gpytorch.kernels.RBFKernel(), num_dims=6)
+        kern = Lgpytorch.kernels.AdditiveStructureKernel(Lgpytorch.kernels.RBFKernel(), num_dims=6)
         mat1 = torch.randn(5, 6)
         mat2 = mat1.detach().clone()
         return kern(mat1, mat2)
 
     def evaluate_lazy_tensor(self, lazy_tensor):
-        res = gpytorch.lazy.delazify(
-            gpytorch.Module.__call__(
+        res = Lgpytorch.lazy.delazify(
+            Lgpytorch.Module.__call__(
                 lazy_tensor.kernel.base_kernel,
                 lazy_tensor.x1.transpose(-1, -2).unsqueeze(-1),
                 lazy_tensor.x2.transpose(-1, -2).unsqueeze(-1),

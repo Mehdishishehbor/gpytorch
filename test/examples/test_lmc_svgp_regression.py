@@ -5,9 +5,9 @@ import os
 import random
 import unittest
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.likelihoods import GaussianLikelihood, MultitaskGaussianLikelihood
+from Lgpytorch.likelihoods import GaussianLikelihood, MultitaskGaussianLikelihood
 
 
 # Batch training test: Let's learn hyperparameters on a sine dataset, but test on a sine dataset and a cosine dataset
@@ -26,21 +26,21 @@ train_y = torch.stack(
 )
 
 
-class LMCModel(gpytorch.models.ApproximateGP):
+class LMCModel(Lgpytorch.models.ApproximateGP):
     def __init__(self):
         # Let's use a different set of inducing points for each latent function
         inducing_points = torch.rand(3, 10, 1)
 
         # We have to mark the CholeskyVariationalDistribution as batch
         # so that we learn a variational distribution for each task
-        variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
+        variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(
             inducing_points.size(-2), batch_shape=torch.Size([3])
         )
 
         # We have to wrap the VariationalStrategy in a LMCVariationalStrategy
         # so that the output will be a MultitaskMultivariateNormal rather than a batch output
-        variational_strategy = gpytorch.variational.LMCVariationalStrategy(
-            gpytorch.variational.VariationalStrategy(
+        variational_strategy = Lgpytorch.variational.LMCVariationalStrategy(
+            Lgpytorch.variational.VariationalStrategy(
                 self, inducing_points, variational_distribution, learn_inducing_locations=True
             ),
             num_tasks=4,
@@ -52,9 +52,9 @@ class LMCModel(gpytorch.models.ApproximateGP):
 
         # The mean and covariance modules should be marked as batch
         # so we learn a different set of hyperparameters
-        self.mean_module = gpytorch.means.ConstantMean(batch_shape=torch.Size([3]))
-        self.covar_module = gpytorch.kernels.ScaleKernel(
-            gpytorch.kernels.RBFKernel(batch_shape=torch.Size([3])), batch_shape=torch.Size([3])
+        self.mean_module = Lgpytorch.means.ConstantMean(batch_shape=torch.Size([3]))
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(
+            Lgpytorch.kernels.RBFKernel(batch_shape=torch.Size([3])), batch_shape=torch.Size([3])
         )
 
     def forward(self, x):
@@ -62,7 +62,7 @@ class LMCModel(gpytorch.models.ApproximateGP):
         # dimension in batch
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class TestIndependentMultitaskGPRegression(unittest.TestCase):
@@ -94,7 +94,7 @@ class TestIndependentMultitaskGPRegression(unittest.TestCase):
         )
 
         # Our loss object. We're using the VariationalELBO, which essentially just computes the ELBO
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(0))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(0))
 
         # We use more CG iterations here because the preconditioner introduced in the NeurIPS paper seems to be less
         # effective for VI.
@@ -118,7 +118,7 @@ class TestIndependentMultitaskGPRegression(unittest.TestCase):
         likelihood.eval()
 
         # Make predictions for both sets of test points, and check MAEs.
-        with torch.no_grad(), gpytorch.settings.max_eager_kernel_size(1):
+        with torch.no_grad(), Lgpytorch.settings.max_eager_kernel_size(1):
             batch_predictions = likelihood(model(train_x))
             preds1 = batch_predictions.mean[:, 0]
             preds2 = batch_predictions.mean[:, 1]
@@ -154,7 +154,7 @@ class TestIndependentMultitaskGPRegression(unittest.TestCase):
         )
 
         # Our loss object. We're using the VariationalELBO, which essentially just computes the ELBO
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(0))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(0))
 
         # Create some task indices
         arange = torch.arange(train_x.size(0))
@@ -182,7 +182,7 @@ class TestIndependentMultitaskGPRegression(unittest.TestCase):
         likelihood.eval()
 
         # Make predictions for both sets of test points, and check MAEs.
-        with torch.no_grad(), gpytorch.settings.max_eager_kernel_size(1):
+        with torch.no_grad(), Lgpytorch.settings.max_eager_kernel_size(1):
             predictions = likelihood(model(train_x, task_indices=train_i))
             mean_abs_error = torch.mean(torch.abs(train_y[arange, train_i] - predictions.mean))
             self.assertLess(mean_abs_error.squeeze().item(), 0.15)

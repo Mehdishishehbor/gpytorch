@@ -6,26 +6,26 @@ import torch
 from torch import sigmoid
 from torch.nn.functional import softplus
 
-import gpytorch
-from gpytorch.test.base_test_case import BaseTestCase
+import Lgpytorch
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 # Basic exact GP model for testing parameter + constraint name resolution
-class ExactGPModel(gpytorch.models.ExactGP):
+class ExactGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
 class TestInterval(unittest.TestCase, BaseTestCase):
     def test_transform_float_bounds(self):
-        constraint = gpytorch.constraints.Interval(1.0, 5.0)
+        constraint = Lgpytorch.constraints.Interval(1.0, 5.0)
 
         v = torch.tensor(-3.0)
 
@@ -35,7 +35,7 @@ class TestInterval(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_inverse_transform_float_bounds(self):
-        constraint = gpytorch.constraints.Interval(1.0, 5.0)
+        constraint = Lgpytorch.constraints.Interval(1.0, 5.0)
 
         v = torch.tensor(-3.0)
 
@@ -44,7 +44,7 @@ class TestInterval(unittest.TestCase, BaseTestCase):
         self.assertAllClose(v, value)
 
     def test_transform_tensor_bounds(self):
-        constraint = gpytorch.constraints.Interval(torch.tensor([1.0, 2.0]), torch.tensor([3.0, 4.0]))
+        constraint = Lgpytorch.constraints.Interval(torch.tensor([1.0, 2.0]), torch.tensor([3.0, 4.0]))
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -56,7 +56,7 @@ class TestInterval(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_inverse_transform_tensor_bounds(self):
-        constraint = gpytorch.constraints.Interval(torch.tensor([1.0, 2.0]), torch.tensor([3.0, 4.0]))
+        constraint = Lgpytorch.constraints.Interval(torch.tensor([1.0, 2.0]), torch.tensor([3.0, 4.0]))
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -65,14 +65,14 @@ class TestInterval(unittest.TestCase, BaseTestCase):
         self.assertAllClose(v, value)
 
     def test_initial_value(self):
-        constraint = gpytorch.constraints.Interval(1.0, 5.0, transform=None, initial_value=3.0)
-        lkhd = gpytorch.likelihoods.GaussianLikelihood(noise_constraint=constraint)
+        constraint = Lgpytorch.constraints.Interval(1.0, 5.0, transform=None, initial_value=3.0)
+        lkhd = Lgpytorch.likelihoods.GaussianLikelihood(noise_constraint=constraint)
         self.assertEqual(lkhd.noise.item(), 3.0)
 
 
 class TestGreaterThan(unittest.TestCase, BaseTestCase):
     def test_transform_float_greater_than(self):
-        constraint = gpytorch.constraints.GreaterThan(1.0)
+        constraint = Lgpytorch.constraints.GreaterThan(1.0)
 
         v = torch.tensor(-3.0)
 
@@ -82,7 +82,7 @@ class TestGreaterThan(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_transform_tensor_greater_than(self):
-        constraint = gpytorch.constraints.GreaterThan([1.0, 2.0])
+        constraint = Lgpytorch.constraints.GreaterThan([1.0, 2.0])
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -94,7 +94,7 @@ class TestGreaterThan(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_inverse_transform_float_greater_than(self):
-        constraint = gpytorch.constraints.GreaterThan(1.0)
+        constraint = Lgpytorch.constraints.GreaterThan(1.0)
 
         v = torch.tensor(-3.0)
 
@@ -103,7 +103,7 @@ class TestGreaterThan(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, v)
 
     def test_inverse_transform_tensor_greater_than(self):
-        constraint = gpytorch.constraints.GreaterThan([1.0, 2.0])
+        constraint = Lgpytorch.constraints.GreaterThan([1.0, 2.0])
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -114,7 +114,7 @@ class TestGreaterThan(unittest.TestCase, BaseTestCase):
 
 class TestLessThan(unittest.TestCase, BaseTestCase):
     def test_transform_float_less_than(self):
-        constraint = gpytorch.constraints.LessThan(1.0)
+        constraint = Lgpytorch.constraints.LessThan(1.0)
 
         v = torch.tensor(-3.0)
 
@@ -124,7 +124,7 @@ class TestLessThan(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_transform_tensor_less_than(self):
-        constraint = gpytorch.constraints.LessThan([1.0, 2.0])
+        constraint = Lgpytorch.constraints.LessThan([1.0, 2.0])
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -136,7 +136,7 @@ class TestLessThan(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_inverse_transform_float_less_than(self):
-        constraint = gpytorch.constraints.LessThan(1.0)
+        constraint = Lgpytorch.constraints.LessThan(1.0)
 
         v = torch.tensor(-3.0)
 
@@ -145,7 +145,7 @@ class TestLessThan(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, v)
 
     def test_inverse_transform_tensor_less_than(self):
-        constraint = gpytorch.constraints.LessThan([1.0, 2.0])
+        constraint = Lgpytorch.constraints.LessThan([1.0, 2.0])
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -156,7 +156,7 @@ class TestLessThan(unittest.TestCase, BaseTestCase):
 
 class TestPositive(unittest.TestCase, BaseTestCase):
     def test_transform_float_positive(self):
-        constraint = gpytorch.constraints.Positive()
+        constraint = Lgpytorch.constraints.Positive()
 
         v = torch.tensor(-3.0)
 
@@ -166,7 +166,7 @@ class TestPositive(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_transform_tensor_positive(self):
-        constraint = gpytorch.constraints.Positive()
+        constraint = Lgpytorch.constraints.Positive()
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -178,7 +178,7 @@ class TestPositive(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, actual_value)
 
     def test_inverse_transform_float_positive(self):
-        constraint = gpytorch.constraints.Positive()
+        constraint = Lgpytorch.constraints.Positive()
 
         v = torch.tensor(-3.0)
 
@@ -187,7 +187,7 @@ class TestPositive(unittest.TestCase, BaseTestCase):
         self.assertAllClose(value, v)
 
     def test_inverse_transform_tensor_positive(self):
-        constraint = gpytorch.constraints.Positive()
+        constraint = Lgpytorch.constraints.Positive()
 
         v = torch.tensor([-3.0, -2.0])
 
@@ -198,31 +198,31 @@ class TestPositive(unittest.TestCase, BaseTestCase):
 
 class TestConstraintNaming(unittest.TestCase, BaseTestCase):
     def test_constraint_by_name(self):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
         model = ExactGPModel(None, None, likelihood)
 
         constraint = model.constraint_for_parameter_name("likelihood.noise_covar.raw_noise")
-        self.assertIsInstance(constraint, gpytorch.constraints.GreaterThan)
+        self.assertIsInstance(constraint, Lgpytorch.constraints.GreaterThan)
 
         constraint = model.constraint_for_parameter_name("covar_module.base_kernel.raw_lengthscale")
-        self.assertIsInstance(constraint, gpytorch.constraints.Positive)
+        self.assertIsInstance(constraint, Lgpytorch.constraints.Positive)
 
         constraint = model.constraint_for_parameter_name("mean_module.constant")
         self.assertIsNone(constraint)
 
     def test_named_parameters_and_constraints(self):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
         model = ExactGPModel(None, None, likelihood)
 
         for name, _param, constraint in model.named_parameters_and_constraints():
             if name == "likelihood.noise_covar.raw_noise":
-                self.assertIsInstance(constraint, gpytorch.constraints.GreaterThan)
+                self.assertIsInstance(constraint, Lgpytorch.constraints.GreaterThan)
             elif name == "mean_module.constant":
                 self.assertIsNone(constraint)
             elif name == "covar_module.raw_outputscale":
-                self.assertIsInstance(constraint, gpytorch.constraints.Positive)
+                self.assertIsInstance(constraint, Lgpytorch.constraints.Positive)
             elif name == "covar_module.base_kernel.raw_lengthscale":
-                self.assertIsInstance(constraint, gpytorch.constraints.Positive)
+                self.assertIsInstance(constraint, Lgpytorch.constraints.Positive)
 
 
 if __name__ == "__main__":

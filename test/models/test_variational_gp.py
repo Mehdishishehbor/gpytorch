@@ -4,10 +4,10 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.models import ApproximateGP
-from gpytorch.test.model_test_case import VariationalModelTestCase
-from gpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
+import Lgpytorch
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.test.model_test_case import VariationalModelTestCase
+from Lgpytorch.variational import CholeskyVariationalDistribution, VariationalStrategy
 
 
 class GPClassificationModel(ApproximateGP):
@@ -19,13 +19,13 @@ class GPClassificationModel(ApproximateGP):
             self, inducing_points, variational_distribution, learn_inducing_locations=use_inducing
         )
         super(GPClassificationModel, self).__init__(variational_strategy)
-        self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.mean_module = Lgpytorch.means.ConstantMean()
+        self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
-        latent_pred = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+        latent_pred = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
         return latent_pred
 
 
@@ -38,7 +38,7 @@ class TestVariationalGP(VariationalModelTestCase, unittest.TestCase):
         return torch.randn(50, 1)
 
     def create_likelihood_and_labels(self):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
         labels = torch.randn(50) + 2
         return likelihood, labels
 
@@ -46,7 +46,7 @@ class TestVariationalGP(VariationalModelTestCase, unittest.TestCase):
         return torch.randn(*batch_shape, 50, 1)
 
     def create_batch_likelihood_and_labels(self, batch_shape=torch.Size([3])):
-        likelihood = gpytorch.likelihoods.GaussianLikelihood(batch_shape=batch_shape)
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood(batch_shape=batch_shape)
         labels = torch.randn(*batch_shape, 50) + 2
         return likelihood, labels
 
@@ -57,15 +57,15 @@ class TestSVGPVariationalGP(TestVariationalGP):
         return model
 
     def test_backward_train_nochol(self):
-        with gpytorch.settings.max_cholesky_size(0):
+        with Lgpytorch.settings.max_cholesky_size(0):
             self.test_backward_train()
 
     def test_batch_backward_train_nochol(self):
-        with gpytorch.settings.max_cholesky_size(0):
+        with Lgpytorch.settings.max_cholesky_size(0):
             self.test_batch_backward_train()
 
     def test_multi_batch_backward_train_nochol(self):
-        with gpytorch.settings.max_cholesky_size(0):
+        with Lgpytorch.settings.max_cholesky_size(0):
             self.test_multi_batch_backward_train()
 
 

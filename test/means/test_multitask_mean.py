@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.means import ConstantMean, MultitaskMean, ZeroMean
-from gpytorch.test.base_mean_test_case import BaseMeanTestCase
+from Lgpytorch.means import ConstantMean, MultitaskMean, ZeroMean
+from Lgpytorch.test.base_mean_test_case import BaseMeanTestCase
 
 
 class TestMultitaskMean(BaseMeanTestCase, unittest.TestCase):

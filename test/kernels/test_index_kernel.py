@@ -2,8 +2,8 @@
 
 import unittest
 
-from gpytorch.kernels import IndexKernel
-from gpytorch.priors import NormalPrior
+from Lgpytorch.kernels import IndexKernel
+from Lgpytorch.priors import NormalPrior
 
 
 class TestIndexKernel(unittest.TestCase):

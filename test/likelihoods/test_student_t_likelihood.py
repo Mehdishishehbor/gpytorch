@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.likelihoods import StudentTLikelihood, _OneDimensionalLikelihood
-from gpytorch.test.base_likelihood_test_case import BaseLikelihoodTestCase
+from Lgpytorch.likelihoods import StudentTLikelihood, _OneDimensionalLikelihood
+from Lgpytorch.test.base_likelihood_test_case import BaseLikelihoodTestCase
 
 
 class TestStudentTLikelihood(BaseLikelihoodTestCase, unittest.TestCase):

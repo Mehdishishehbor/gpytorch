@@ -6,13 +6,13 @@ import unittest
 import torch
 from torch import nn
 
-import gpytorch
+import Lgpytorch
 
 
 class TestLogNormalCDF(unittest.TestCase):
     def test_forward(self):
         inputs = torch.tensor([-6, -5, -3, -1, 0, 1, 3, 5], dtype=torch.float)
-        output = gpytorch.log_normal_cdf(inputs)
+        output = Lgpytorch.log_normal_cdf(inputs)
 
         # Answers should be reasonable for small values
         self.assertLess(math.fabs(output[0] + 20.7368), 1e-4)
@@ -28,7 +28,7 @@ class TestLogNormalCDF(unittest.TestCase):
 
     def test_backward(self):
         inputs = nn.Parameter(torch.tensor([-6, -5, -3, -1, 0, 1, 3, 5], dtype=torch.float))
-        output = gpytorch.log_normal_cdf(inputs)
+        output = Lgpytorch.log_normal_cdf(inputs)
         output.backward(torch.ones(8))
 
         gradient = inputs.grad

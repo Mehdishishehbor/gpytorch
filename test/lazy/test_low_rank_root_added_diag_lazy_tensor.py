@@ -6,9 +6,9 @@ from unittest.mock import MagicMock, patch
 
 import torch
 
-import gpytorch
-from gpytorch.lazy import LowRankRootAddedDiagLazyTensor, LowRankRootLazyTensor
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, _ensure_symmetric_grad
+import Lgpytorch
+from Lgpytorch.lazy import LowRankRootAddedDiagLazyTensor, LowRankRootLazyTensor
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase, _ensure_symmetric_grad
 
 
 class TestLowRankRootAddedDiagLazyTensor(LazyTensorTestCase, unittest.TestCase):
@@ -40,9 +40,9 @@ class TestLowRankRootAddedDiagLazyTensor(LazyTensorTestCase, unittest.TestCase):
             lhs.requires_grad_(True)
             lhs_copy = lhs.clone().detach().requires_grad_(True)
 
-        _wrapped_cg = MagicMock(wraps=gpytorch.utils.linear_cg)
+        _wrapped_cg = MagicMock(wraps=Lgpytorch.utils.linear_cg)
         with patch("gpytorch.utils.linear_cg", new=_wrapped_cg) as linear_cg_mock:
-            with gpytorch.settings.max_cholesky_size(math.inf if cholesky else 0), gpytorch.settings.cg_tolerance(1e-4):
+            with Lgpytorch.settings.max_cholesky_size(math.inf if cholesky else 0), Lgpytorch.settings.cg_tolerance(1e-4):
                 # Perform the inv_matmul
                 if lhs is not None:
                     res = lazy_tensor.inv_matmul(rhs, lhs)
@@ -75,11 +75,11 @@ class TestLowRankRootAddedDiagLazyTensor(LazyTensorTestCase, unittest.TestCase):
             vecs = torch.randn(*lazy_tensor.batch_shape, lazy_tensor.size(-1), 3, requires_grad=True)
             vecs_copy = vecs.clone().detach_().requires_grad_(True)
 
-            _wrapped_cg = MagicMock(wraps=gpytorch.utils.linear_cg)
+            _wrapped_cg = MagicMock(wraps=Lgpytorch.utils.linear_cg)
             with patch("gpytorch.utils.linear_cg", new=_wrapped_cg) as linear_cg_mock:
-                with gpytorch.settings.num_trace_samples(256), gpytorch.settings.max_cholesky_size(
+                with Lgpytorch.settings.num_trace_samples(256), Lgpytorch.settings.max_cholesky_size(
                     math.inf if cholesky else 0
-                ), gpytorch.settings.cg_tolerance(1e-5):
+                ), Lgpytorch.settings.cg_tolerance(1e-5):
 
                     res_inv_quad, res_logdet = lazy_tensor.inv_quad_logdet(
                         inv_quad_rhs=vecs, logdet=True, reduce_inv_quad=reduce_inv_quad

@@ -7,15 +7,15 @@ import random
 import torch
 import unittest
 
-import gpytorch
+import Lgpytorch
 from torch import optim
-from gpytorch.kernels import RBFKernel, ScaleKernel
-from gpytorch.likelihoods import BernoulliLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.models import ApproximateGP
-from gpytorch.variational import AdditiveGridInterpolationVariationalStrategy, CholeskyVariationalDistribution
+from Lgpytorch.kernels import RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import BernoulliLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.models import ApproximateGP
+from Lgpytorch.variational import AdditiveGridInterpolationVariationalStrategy, CholeskyVariationalDistribution
 
 n = 64
 train_x = torch.zeros(n ** 2, 2)
@@ -64,10 +64,10 @@ class TestKISSGPAdditiveClassification(unittest.TestCase):
             torch.set_rng_state(self.rng_state)
 
     def test_kissgp_classification_error(self):
-        with gpytorch.settings.use_toeplitz(False), gpytorch.settings.max_preconditioner_size(5):
+        with Lgpytorch.settings.use_toeplitz(False), Lgpytorch.settings.max_preconditioner_size(5):
             model = GPClassificationModel()
             likelihood = BernoulliLikelihood()
-            mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
+            mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
 
             # Find optimal model hyperparameters
             model.train()

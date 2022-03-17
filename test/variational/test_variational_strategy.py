@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.test.variational_test_case import VariationalTestCase
+import Lgpytorch
+from Lgpytorch.test.variational_test_case import VariationalTestCase
 
 
 class TestVariationalGP(VariationalTestCase, unittest.TestCase):
@@ -15,15 +15,15 @@ class TestVariationalGP(VariationalTestCase, unittest.TestCase):
 
     @property
     def distribution_cls(self):
-        return gpytorch.variational.CholeskyVariationalDistribution
+        return Lgpytorch.variational.CholeskyVariationalDistribution
 
     @property
     def mll_cls(self):
-        return gpytorch.mlls.VariationalELBO
+        return Lgpytorch.mlls.VariationalELBO
 
     @property
     def strategy_cls(self):
-        return gpytorch.variational.VariationalStrategy
+        return Lgpytorch.variational.VariationalStrategy
 
     def test_training_iteration(self, *args, **kwargs):
         cg_mock, cholesky_mock, ciq_mock = super().test_training_iteration(*args, **kwargs)
@@ -41,55 +41,55 @@ class TestVariationalGP(VariationalTestCase, unittest.TestCase):
 class TestPredictiveGP(TestVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.PredictiveLogLikelihood
+        return Lgpytorch.mlls.PredictiveLogLikelihood
 
 
 class TestRobustVGP(TestVariationalGP):
     @property
     def mll_cls(self):
-        return gpytorch.mlls.GammaRobustVariationalELBO
+        return Lgpytorch.mlls.GammaRobustVariationalELBO
 
 
 class TestMeanFieldVariationalGP(TestVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldPredictiveGP(TestPredictiveGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestMeanFieldRobustVGP(TestRobustVGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.MeanFieldVariationalDistribution
+        return Lgpytorch.variational.MeanFieldVariationalDistribution
 
 
 class TestDeltaVariationalGP(TestVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestDeltaPredictiveGP(TestPredictiveGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestDeltaRobustVGP(TestRobustVGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.DeltaVariationalDistribution
+        return Lgpytorch.variational.DeltaVariationalDistribution
 
 
 class TestNGDVariationalGP(TestVariationalGP):
     @property
     def distribution_cls(self):
-        return gpytorch.variational.NaturalVariationalDistribution
+        return Lgpytorch.variational.NaturalVariationalDistribution
 
     def test_training_iteration(self, *args, **kwargs):
         cg_mock, cholesky_mock, ciq_mock = VariationalTestCase.test_training_iteration(self, *args, **kwargs)

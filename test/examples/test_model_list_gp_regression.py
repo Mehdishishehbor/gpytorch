@@ -3,19 +3,19 @@
 import math
 import unittest
 
-import gpytorch
+import Lgpytorch
 import torch
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import RBFKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood, LikelihoodList
-from gpytorch.means import ConstantMean
-from gpytorch.mlls import SumMarginalLogLikelihood
-from gpytorch.models import IndependentModelList
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood, LikelihoodList
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.mlls import SumMarginalLogLikelihood
+from Lgpytorch.models import IndependentModelList
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.test.utils import least_used_cuda_device
 
 
-class ExactGPModel(gpytorch.models.ExactGP):
+class ExactGPModel(Lgpytorch.models.ExactGP):
     def __init__(self, train_inputs, train_targets, likelihood):
         super(ExactGPModel, self).__init__(train_inputs, train_targets, likelihood)
         self.mean_module = ConstantMean(prior=SmoothedBoxPrior(-1, 1))
@@ -66,7 +66,7 @@ class TestModelListGPRegression(unittest.TestCase):
         model.eval()
         likelihood.eval()
 
-        with torch.no_grad(), gpytorch.settings.fast_pred_var():
+        with torch.no_grad(), Lgpytorch.settings.fast_pred_var():
             test_x = torch.linspace(0, 1, 10, device=torch.device("cuda") if cuda else torch.device("cpu"))
             outputs_f = model(test_x, test_x)
             predictions_obs_noise = likelihood(*outputs_f)

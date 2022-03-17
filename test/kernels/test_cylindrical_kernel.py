@@ -5,9 +5,9 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import CylindricalKernel, MaternKernel
-from gpytorch.priors import NormalPrior
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import CylindricalKernel, MaternKernel
+from Lgpytorch.priors import NormalPrior
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestCylindricalKernel(unittest.TestCase, BaseKernelTestCase):

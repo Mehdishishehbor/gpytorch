@@ -4,13 +4,13 @@ from unittest import TestCase
 
 import torch
 
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import AdditiveKernel, NewtonGirardAdditiveKernel, RBFKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.mlls import ExactMarginalLogLikelihood
-from gpytorch.models import ExactGP
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import AdditiveKernel, NewtonGirardAdditiveKernel, RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.mlls import ExactMarginalLogLikelihood
+from Lgpytorch.models import ExactGP
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 
 class TestNewtonGirardAdditiveKernel(TestCase, BaseKernelTestCase):

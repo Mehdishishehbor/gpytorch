@@ -2,10 +2,10 @@ import unittest
 
 import torch
 
-import gpytorch
-from gpytorch.distributions import MultivariateNormal
-from gpytorch.lazy import CholLazyTensor, TriangularLazyTensor
-from gpytorch.variational import NaturalVariationalDistribution, TrilNaturalVariationalDistribution
+import Lgpytorch
+from Lgpytorch.distributions import MultivariateNormal
+from Lgpytorch.lazy import CholLazyTensor, TriangularLazyTensor
+from Lgpytorch.variational import NaturalVariationalDistribution, TrilNaturalVariationalDistribution
 
 
 class Float64Test(unittest.TestCase):
@@ -55,20 +55,20 @@ class TestNatVariational(Float64Test):
     def test_optimization_optimal_error(self, num_inducing=16, num_data=32, D=2):
         inducing_points = torch.randn(num_inducing, D)
 
-        class SVGP(gpytorch.models.ApproximateGP):
+        class SVGP(Lgpytorch.models.ApproximateGP):
             def __init__(self):
                 v_dist = NaturalVariationalDistribution(num_inducing)
-                v_strat = gpytorch.variational.UnwhitenedVariationalStrategy(self, inducing_points, v_dist)
+                v_strat = Lgpytorch.variational.UnwhitenedVariationalStrategy(self, inducing_points, v_dist)
                 super().__init__(v_strat)
-                self.mean_module = gpytorch.means.ZeroMean()
-                self.covar_module = gpytorch.kernels.RBFKernel()
+                self.mean_module = Lgpytorch.means.ZeroMean()
+                self.covar_module = Lgpytorch.kernels.RBFKernel()
 
             def forward(self, x):
                 return MultivariateNormal(self.mean_module(x), self.covar_module(x))
 
         model = SVGP().train()
-        likelihood = gpytorch.likelihoods.GaussianLikelihood().train()
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data)
+        likelihood = Lgpytorch.likelihoods.GaussianLikelihood().train()
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data)
         X = torch.randn((num_data, D))
         y = torch.randn(num_data)
 

@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import CholLazyTensor, TriangularLazyTensor
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
+from Lgpytorch.lazy import CholLazyTensor, TriangularLazyTensor
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
 
 
 class TestCholLazyTensor(LazyTensorTestCase, unittest.TestCase):

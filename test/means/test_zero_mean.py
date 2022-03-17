@@ -2,8 +2,8 @@
 
 import unittest
 
-from gpytorch.means import ZeroMean
-from gpytorch.test.base_mean_test_case import BaseMeanTestCase
+from Lgpytorch.means import ZeroMean
+from Lgpytorch.test.base_mean_test_case import BaseMeanTestCase
 
 
 class TestZeroMean(BaseMeanTestCase, unittest.TestCase):

@@ -7,13 +7,13 @@ import random
 import torch
 import unittest
 
-import gpytorch
+import Lgpytorch
 from torch import optim
-from gpytorch.kernels import RBFKernel, ScaleKernel
-from gpytorch.means import ConstantMean
-from gpytorch.likelihoods import BernoulliLikelihood
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
+from Lgpytorch.kernels import RBFKernel, ScaleKernel
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.likelihoods import BernoulliLikelihood
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
 
 n = 4
 train_x = torch.zeros(pow(n, 2), 2)
@@ -27,12 +27,12 @@ train_x = train_x
 train_y = train_y.add(1).div(2)
 
 
-class GPClassificationModel(gpytorch.models.ApproximateGP):
+class GPClassificationModel(Lgpytorch.models.ApproximateGP):
     def __init__(self, grid_size=6, grid_bounds=[(-0.33, 1.33), (-0.33, 1.33)]):
-        variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
+        variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(
             num_inducing_points=int(pow(grid_size, len(grid_bounds)))
         )
-        variational_strategy = gpytorch.variational.GridInterpolationVariationalStrategy(
+        variational_strategy = Lgpytorch.variational.GridInterpolationVariationalStrategy(
             self, grid_size=grid_size, grid_bounds=grid_bounds, variational_distribution=variational_distribution
         )
         super(GPClassificationModel, self).__init__(variational_strategy)
@@ -64,13 +64,13 @@ class TestKISSGPKroneckerProductClassification(unittest.TestCase):
     def test_kissgp_classification_error(self):
         model = GPClassificationModel()
         likelihood = BernoulliLikelihood()
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
 
         # Find optimal model hyperparameters
         model.train()
         likelihood.train()
 
-        with gpytorch.settings.max_preconditioner_size(5):
+        with Lgpytorch.settings.max_preconditioner_size(5):
             optimizer = optim.Adam(model.parameters(), lr=0.15)
             optimizer.n_iter = 0
             for _ in range(100):

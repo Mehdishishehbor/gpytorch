@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import BlockInterleavedLazyTensor, NonLazyTensor
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
+from Lgpytorch.lazy import BlockInterleavedLazyTensor, NonLazyTensor
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
 
 
 class TestBlockInterleavedLazyTensor(LazyTensorTestCase, unittest.TestCase):

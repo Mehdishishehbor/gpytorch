@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import RootLazyTensor
-from gpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
+from Lgpytorch.lazy import RootLazyTensor
+from Lgpytorch.test.lazy_tensor_test_case import LazyTensorTestCase
 
 
 def make_random_mat(size, rank, batch_shape=torch.Size(())):

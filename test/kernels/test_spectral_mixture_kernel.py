@@ -4,7 +4,7 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import SpectralMixtureKernel
+from Lgpytorch.kernels import SpectralMixtureKernel
 
 
 class TestSpectralMixtureKernel(unittest.TestCase):

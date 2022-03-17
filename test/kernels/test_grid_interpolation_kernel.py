@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import GridInterpolationKernel, RBFKernel
-from gpytorch.lazy import InterpolatedLazyTensor
+from Lgpytorch.kernels import GridInterpolationKernel, RBFKernel
+from Lgpytorch.lazy import InterpolatedLazyTensor
 
 
 class TestGridInterpolationKernel(unittest.TestCase):

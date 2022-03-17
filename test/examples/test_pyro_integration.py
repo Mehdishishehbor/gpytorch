@@ -4,14 +4,14 @@ from math import pi
 import torch
 import time
 import unittest
-import gpytorch
-from gpytorch.test.base_test_case import BaseTestCase
+import Lgpytorch
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 try:
     import pyro
 
-    class ClusterGaussianLikelihood(gpytorch.likelihoods.Likelihood):
+    class ClusterGaussianLikelihood(Lgpytorch.likelihoods.Likelihood):
         def __init__(self, num_tasks, num_clusters, name_prefix=str(time.time()), reparam=False):
             super().__init__()
             self.register_buffer("prior_cluster_logits", torch.zeros(num_tasks, num_clusters))
@@ -58,17 +58,17 @@ try:
             ).to_event(1)
             return res
 
-    class ClusterMultitaskGPModel(gpytorch.models.pyro.PyroGP):
+    class ClusterMultitaskGPModel(Lgpytorch.models.pyro.PyroGP):
         def __init__(self, train_x, train_y, num_functions=2, reparam=False):
             num_data = train_y.size(-2)
 
             # Define all the variational stuff
             inducing_points = torch.linspace(0, 1, 64).unsqueeze(-1)
-            variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
+            variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(
                 num_inducing_points=inducing_points.size(-2), batch_shape=torch.Size([num_functions])
             )
-            variational_strategy = gpytorch.variational.IndependentMultitaskVariationalStrategy(
-                gpytorch.variational.VariationalStrategy(self, inducing_points, variational_distribution),
+            variational_strategy = Lgpytorch.variational.IndependentMultitaskVariationalStrategy(
+                Lgpytorch.variational.VariationalStrategy(self, inducing_points, variational_distribution),
                 num_tasks=num_functions,
             )
 
@@ -81,68 +81,68 @@ try:
             self.num_functions = num_functions
 
             # Mean, covar
-            self.mean_module = gpytorch.means.ZeroMean()
-            self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+            self.mean_module = Lgpytorch.means.ZeroMean()
+            self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
         def forward(self, x):
             mean_x = self.mean_module(x)
             covar_x = self.covar_module(x)
-            res = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+            res = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
             return res
 
-    class SVGPModel(gpytorch.models.pyro.PyroGP):
+    class SVGPModel(Lgpytorch.models.pyro.PyroGP):
         def __init__(self, train_x, train_y):
             num_data = train_y.size(-1)
 
             # Define all the variational stuff
             inducing_points = torch.linspace(0, 1, 64).unsqueeze(-1)
-            variational_distribution = gpytorch.variational.MeanFieldVariationalDistribution(inducing_points.size(-2))
-            variational_strategy = gpytorch.variational.VariationalStrategy(
+            variational_distribution = Lgpytorch.variational.MeanFieldVariationalDistribution(inducing_points.size(-2))
+            variational_strategy = Lgpytorch.variational.VariationalStrategy(
                 self, inducing_points, variational_distribution
             )
 
             # Standard initializtation
-            likelihood = gpytorch.likelihoods.GaussianLikelihood()
+            likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
             super().__init__(variational_strategy, likelihood, num_data=num_data, name_prefix=str(time.time()))
             self.likelihood = likelihood
 
             # Mean, covar
-            self.mean_module = gpytorch.means.ZeroMean()
-            self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+            self.mean_module = Lgpytorch.means.ZeroMean()
+            self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
         def forward(self, x):
             mean_x = self.mean_module(x)
             covar_x = self.covar_module(x)
-            res = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+            res = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
             return res
 
-    class ExactGPModel(gpytorch.models.ExactGP):
+    class ExactGPModel(Lgpytorch.models.ExactGP):
         def __init__(self, train_x, train_y, likelihood):
             super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
-            self.mean_module = gpytorch.means.ConstantMean()
-            self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+            self.mean_module = Lgpytorch.means.ConstantMean()
+            self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
         def forward(self, x):
             mean_x = self.mean_module(x)
             covar_x = self.covar_module(x)
-            return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+            return Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
-    class LowLevelInterfaceClusterMultitaskGPModel(gpytorch.models.ApproximateGP):
+    class LowLevelInterfaceClusterMultitaskGPModel(Lgpytorch.models.ApproximateGP):
         def __init__(self, train_x, train_y, num_functions=2):
             # Define all the variational stuff
             inducing_points = torch.linspace(0, 1, 64).unsqueeze(-1)
-            variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
+            variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(
                 num_inducing_points=inducing_points.size(-2), batch_shape=torch.Size([num_functions])
             )
-            variational_strategy = gpytorch.variational.IndependentMultitaskVariationalStrategy(
-                gpytorch.variational.VariationalStrategy(self, inducing_points, variational_distribution),
+            variational_strategy = Lgpytorch.variational.IndependentMultitaskVariationalStrategy(
+                Lgpytorch.variational.VariationalStrategy(self, inducing_points, variational_distribution),
                 num_tasks=num_functions,
             )
             super().__init__(variational_strategy)
 
             # Mean, covar
-            self.mean_module = gpytorch.means.ZeroMean()
-            self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+            self.mean_module = Lgpytorch.means.ZeroMean()
+            self.covar_module = Lgpytorch.kernels.ScaleKernel(Lgpytorch.kernels.RBFKernel())
 
             # Values to store
             self.name_prefix = "llcmgp"
@@ -162,7 +162,7 @@ try:
         def forward(self, x):
             mean_x = self.mean_module(x)
             covar_x = self.covar_module(x)
-            res = gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
+            res = Lgpytorch.distributions.MultivariateNormal(mean_x, covar_x)
             return res
 
         def guide(self, x, y):
@@ -219,7 +219,7 @@ try:
                 svi.step(train_x, train_y)
 
             # Test the model
-            with torch.no_grad(), gpytorch.settings.num_likelihood_samples(128):
+            with torch.no_grad(), Lgpytorch.settings.num_likelihood_samples(128):
                 model.eval()
                 test_x = torch.linspace(0, 1, 51)
                 test_y = torch.sin(test_x * (2 * pi))
@@ -257,7 +257,7 @@ try:
                 svi.step(train_x, train_y)
 
             # Test the model
-            with torch.no_grad(), gpytorch.settings.num_likelihood_samples(128):
+            with torch.no_grad(), Lgpytorch.settings.num_likelihood_samples(128):
                 model.eval()
                 test_x = torch.linspace(0, 1, 51)
                 test_y1 = torch.sin(test_x * (2 * pi))
@@ -316,20 +316,20 @@ try:
             x = torch.linspace(0, 1, 10).double()
             y = torch.sin(x * (2 * pi)).double() + torch.randn(x.size()).double() * 0.1
 
-            likelihood = gpytorch.likelihoods.GaussianLikelihood()
+            likelihood = Lgpytorch.likelihoods.GaussianLikelihood()
             likelihood.double()
 
             model = ExactGPModel(x, y, likelihood)
             model.double()
 
             model.covar_module.base_kernel.register_prior(
-                "lengthscale_prior", gpytorch.priors.LogNormalPrior(0.1, 1.0), "lengthscale"
+                "lengthscale_prior", Lgpytorch.priors.LogNormalPrior(0.1, 1.0), "lengthscale"
             )
             model.covar_module.register_prior(
-                "raw_outputscale_prior", gpytorch.priors.NormalPrior(0.0, 1.0), "raw_outputscale"
+                "raw_outputscale_prior", Lgpytorch.priors.NormalPrior(0.0, 1.0), "raw_outputscale"
             )
-            model.likelihood.register_prior("raw_noise_prior", gpytorch.priors.NormalPrior(0.0, 1.0), "raw_noise")
-            model.mean_module.register_prior("constant_prior", gpytorch.priors.NormalPrior(0.0, 1.0), "constant")
+            model.likelihood.register_prior("raw_noise_prior", Lgpytorch.priors.NormalPrior(0.0, 1.0), "raw_noise")
+            model.mean_module.register_prior("constant_prior", Lgpytorch.priors.NormalPrior(0.0, 1.0), "constant")
 
             def pyro_model(x, y):
                 sampled_model = model.pyro_sample_from_prior()

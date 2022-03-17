@@ -4,8 +4,8 @@ import unittest
 
 import torch
 
-from gpytorch.lazy import NonLazyTensor
-from gpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.lazy import NonLazyTensor
+from Lgpytorch.test.base_test_case import BaseTestCase
 
 
 class TestDiagonalization(BaseTestCase, unittest.TestCase):

@@ -7,12 +7,12 @@ import random
 import torch
 import unittest
 
-import gpytorch
-from gpytorch.kernels import RBFKernel, ScaleKernel
-from gpytorch.likelihoods import GaussianLikelihood
-from gpytorch.means import ConstantMean
-from gpytorch.priors import SmoothedBoxPrior
-from gpytorch.distributions import MultivariateNormal
+import Lgpytorch
+from Lgpytorch.kernels import RBFKernel, ScaleKernel
+from Lgpytorch.likelihoods import GaussianLikelihood
+from Lgpytorch.means import ConstantMean
+from Lgpytorch.priors import SmoothedBoxPrior
+from Lgpytorch.distributions import MultivariateNormal
 from torch.utils.data import TensorDataset, DataLoader
 
 
@@ -26,12 +26,12 @@ def make_data():
     return train_x, train_y, test_x, test_y
 
 
-class GPRegressionModel(gpytorch.models.ApproximateGP):
+class GPRegressionModel(Lgpytorch.models.ApproximateGP):
     def __init__(self, grid_size=20, grid_bounds=[(-0.1, 1.1)]):
-        variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
+        variational_distribution = Lgpytorch.variational.CholeskyVariationalDistribution(
             num_inducing_points=int(pow(grid_size, len(grid_bounds)))
         )
-        variational_strategy = gpytorch.variational.GridInterpolationVariationalStrategy(
+        variational_strategy = Lgpytorch.variational.GridInterpolationVariationalStrategy(
             self, grid_size=grid_size, grid_bounds=grid_bounds, variational_distribution=variational_distribution
         )
         super(GPRegressionModel, self).__init__(variational_strategy)
@@ -64,14 +64,14 @@ class TestKISSGPVariationalRegression(unittest.TestCase):
 
         model = GPRegressionModel()
         likelihood = GaussianLikelihood()
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=len(train_y))
         # We use SGD here, rather than Adam
         # Emperically, we find that SGD is better for variational regression
         optimizer = torch.optim.Adam([{"params": model.parameters()}, {"params": likelihood.parameters()}], lr=0.01)
 
         # Our loss object
         # We're using the VariationalELBO object
-        mll = gpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(0))
+        mll = Lgpytorch.mlls.VariationalELBO(likelihood, model, num_data=train_y.size(0))
 
         # The training loop
         def train(n_epochs=15):

@@ -5,11 +5,11 @@ import unittest
 
 import torch
 
-import gpytorch
+import Lgpytorch
 
 
 def dist_func(x1, x2):
-    dist_module = gpytorch.kernels.kernel.Distance()
+    dist_module = Lgpytorch.kernels.kernel.Distance()
     return dist_module._dist(x1, x2, postprocess=torch.tensor(False))
 
 
@@ -22,7 +22,7 @@ class TestMaternCovariance(unittest.TestCase):
         # Doesn't support ARD
         lengthscale = torch.randn(*batch_size).view(*batch_size, 1, 1) ** 2
 
-        res = gpytorch.functions.MaternCovariance.apply(x1, x2, lengthscale, nu, dist_func)
+        res = Lgpytorch.functions.MaternCovariance.apply(x1, x2, lengthscale, nu, dist_func)
         scaled_unitless_dist = math.sqrt(nu * 2) * dist_func(x1, x2).div(lengthscale)
         exp_component = torch.exp(-scaled_unitless_dist)
         actual = exp_component
@@ -34,7 +34,7 @@ class TestMaternCovariance(unittest.TestCase):
         x1 = torch.randn(*batch_size, 7, 9, dtype=torch.float64)
         x2 = torch.randn(*batch_size, 6, 9, dtype=torch.float64)
         lengthscale = torch.randn(*batch_size, dtype=torch.float64, requires_grad=True).view(*batch_size, 1, 1) ** 2
-        f = lambda x1, x2, l: gpytorch.functions.MaternCovariance.apply(x1, x2, l, nu, dist_func)
+        f = lambda x1, x2, l: Lgpytorch.functions.MaternCovariance.apply(x1, x2, l, nu, dist_func)
         try:
             torch.autograd.gradcheck(f, (x1, x2, lengthscale))
         except RuntimeError:
@@ -48,7 +48,7 @@ class TestMaternCovariance(unittest.TestCase):
         # Doesn't support ARD
         lengthscale = torch.randn(*batch_size).view(*batch_size, 1, 1) ** 2
 
-        res = gpytorch.functions.MaternCovariance.apply(x1, x2, lengthscale, nu, dist_func)
+        res = Lgpytorch.functions.MaternCovariance.apply(x1, x2, lengthscale, nu, dist_func)
         scaled_unitless_dist = math.sqrt(nu * 2) * dist_func(x1, x2).div(lengthscale)
         exp_component = torch.exp(-scaled_unitless_dist)
         actual = exp_component * (1 + scaled_unitless_dist)
@@ -60,7 +60,7 @@ class TestMaternCovariance(unittest.TestCase):
         x1 = torch.randn(*batch_size, 7, 9, dtype=torch.float64)
         x2 = torch.randn(*batch_size, 6, 9, dtype=torch.float64)
         lengthscale = torch.randn(*batch_size, dtype=torch.float64, requires_grad=True).view(*batch_size, 1, 1) ** 2
-        f = lambda x1, x2, l: gpytorch.functions.MaternCovariance.apply(x1, x2, l, nu, dist_func)
+        f = lambda x1, x2, l: Lgpytorch.functions.MaternCovariance.apply(x1, x2, l, nu, dist_func)
         try:
             torch.autograd.gradcheck(f, (x1, x2, lengthscale))
         except RuntimeError:
@@ -74,7 +74,7 @@ class TestMaternCovariance(unittest.TestCase):
         # Doesn't support ARD
         lengthscale = torch.randn(*batch_size).view(*batch_size, 1, 1) ** 2
 
-        res = gpytorch.functions.MaternCovariance.apply(x1, x2, lengthscale, nu, dist_func)
+        res = Lgpytorch.functions.MaternCovariance.apply(x1, x2, lengthscale, nu, dist_func)
         scaled_unitless_dist = math.sqrt(nu * 2) * dist_func(x1, x2).div(lengthscale)
         exp_component = torch.exp(-scaled_unitless_dist)
         actual = exp_component * (1 + scaled_unitless_dist + scaled_unitless_dist ** 2 / 3)
@@ -86,7 +86,7 @@ class TestMaternCovariance(unittest.TestCase):
         x1 = torch.randn(*batch_size, 7, 9, dtype=torch.float64)
         x2 = torch.randn(*batch_size, 6, 9, dtype=torch.float64)
         lengthscale = torch.randn(*batch_size, dtype=torch.float64, requires_grad=True).view(*batch_size, 1, 1) ** 2
-        f = lambda x1, x2, l: gpytorch.functions.MaternCovariance.apply(x1, x2, l, nu, dist_func)
+        f = lambda x1, x2, l: Lgpytorch.functions.MaternCovariance.apply(x1, x2, l, nu, dist_func)
         try:
             torch.autograd.gradcheck(f, (x1, x2, lengthscale))
         except RuntimeError:

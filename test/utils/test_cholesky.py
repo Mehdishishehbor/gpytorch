@@ -5,11 +5,11 @@ import warnings
 
 import torch
 
-from gpytorch.test.base_test_case import BaseTestCase
-from gpytorch.test.utils import least_used_cuda_device
-from gpytorch.utils.cholesky import psd_safe_cholesky
-from gpytorch.utils.errors import NanError
-from gpytorch.utils.warnings import NumericalWarning
+from Lgpytorch.test.base_test_case import BaseTestCase
+from Lgpytorch.test.utils import least_used_cuda_device
+from Lgpytorch.utils.cholesky import psd_safe_cholesky
+from Lgpytorch.utils.errors import NanError
+from Lgpytorch.utils.warnings import NumericalWarning
 
 
 class TestPSDSafeCholesky(BaseTestCase, unittest.TestCase):

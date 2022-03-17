@@ -4,9 +4,9 @@ import unittest
 
 import torch
 
-from gpytorch.kernels import MaternKernel as GMaternKernel
-from gpytorch.kernels.keops import MaternKernel
-from gpytorch.test.base_kernel_test_case import BaseKernelTestCase
+from Lgpytorch.kernels import MaternKernel as GMaternKernel
+from Lgpytorch.kernels.keops import MaternKernel
+from Lgpytorch.test.base_kernel_test_case import BaseKernelTestCase
 
 try:
     import pykeops  # noqa
