@@ -23,7 +23,7 @@ from matplotlib import pyplot as plt
 import os
 import sys
 
-#sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
 from Lgpytorch.models.exact_gp import ExactGP
@@ -172,6 +172,8 @@ for i in range(training_iter):
         model.covar_module.base_kernel.lengthscale.item(),
         model.likelihood.noise.item()
     ))
+    for name in model.parameters():
+        print(name)
     optimizer.step()
 
 # %%
