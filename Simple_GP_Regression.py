@@ -164,6 +164,8 @@ for i in range(training_iter):
     optimizer.zero_grad()
     # Output from model
     output = model(train_x)
+
+    RR = output.covariance_matrix
     # Calc loss and backprop gradients
     loss = -mll(output, train_y)
     loss.backward()
