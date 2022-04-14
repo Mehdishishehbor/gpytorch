@@ -86,9 +86,9 @@ def pyro_model(x, y):
     return y
 
 
-num_chains = 2
+num_chains = 1
 warmup_steps = 100
-num_samples = 500
+num_samples = 100
 
 if __name__ == '__main__':
     nuts_kernel = NUTS(pyro_model)
